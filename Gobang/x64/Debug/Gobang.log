@@ -1,0 +1,4 @@
+﻿  源.cpp
+C:\Users\86139\source\repos\Gobang\源.cpp(570,16): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+C:\Users\86139\source\repos\Gobang\源.cpp(726,10): warning C4553: “==”: 未使用表达式结果；是否打算使用“=”?
+  Gobang.vcxproj -> C:\Users\86139\source\repos\Gobang\x64\Debug\Gobang.exe
