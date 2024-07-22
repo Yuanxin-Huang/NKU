@@ -1,0 +1,78 @@
+Quicksum
+
+total submissions: 55timespassed: 15timespassing rate: 27.27%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+校验是一个扫描数据包并返回一个数字的算法。校验的思想是，如果数据包发生变化了，校验值也将随着发生变化，所以校验经常被用于检测传输错误，验证文件的内容，而且在许多其他的情况下，用于检测数据的不良变化。
+
+本题请你实现一个名为Quicksum的校验算法。Quicksum的数据包只包含大写字母和空格，以大写字母开始和结束，空格和字母可以以任何组合形式出现，可以有连续的空格。
+
+Quicksum计算在数据包中每个字符的位置与字符的对应值的乘积的总和。空格的对应值为0，字母的对应值是它们在字母表中的位置。A=1，B=2，以此类推Z=26。例如Quicksum计算数据包“ACM”和“MID CENTRAL”如下：
+
+ACM: 1 * 1 + 2 * 3 + 3 * 13 = 46
+
+MID CENTRAL: 1 * 13 + 2 * 9 + 3 * 4 + 4 * 0 + 5 * 3 + 6 * 5 + 7 * 14 + 8 * 20 + 9 * 18 + 10 * 1 + 11 *12 = 650
+
+输入：
+
+由一个或多个测试用例（数据包）组成，输入最后给出仅包含“#”的一行表示输入结束。每个测试用例一行，开始和结束没有空格，包含了1~255个字符。
+
+输出：
+
+对每个测试用例（数据包），在一行中输出其Quicksum的值。
+
+提示：
+
+设计一个函数value(c)，若字符c==' '，则返回0，否则返回c的对应值c-'A'+1.
+
+整个计算过程为一个循环，每次循环输入当前测试用例并计算和输出其Quicksum值：字符位置和Quicksum值初始化为0，当前测试用例所对应的字符串s设空，然后反复读入字符c，将c送入s，直至c为文件结束标志（EOF）或行结束符（'\n'）为止。字符串s的Quicksum值可以边输入边计算，即Quicksum=
+
+sample inpput and output
+样例1
+input:
+ACM
+MID CENTRAL
+REGIONAL PROGRAMMING CONTEST
+ACN
+A C M
+ABC
+BBC
+#
+output:
+46
+650
+4690
+49
+75
+14
+15 
+
+#define   _CRT_SECURE_NO_WARNINGS 1//Quicksum
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+	char s[300];
+	int Quicksum = 0;
+	int value(char c);
+	int i = 0,j=0;
+	while(gets_s(s),s[0] != '#') {
+		int len = strlen(s);
+		for (i = 0; i < len; i++) {
+			Quicksum = Quicksum + value(s[i]) * (i + 1);
+		}
+		printf("%d\n", Quicksum);
+		Quicksum=0;
+	}
+	return 0;
+}
+int value(char c) {
+	if (c == ' ') {
+		return 0;
+	}
+	else {
+		return (c - 'A' + 1);
+	}
+}

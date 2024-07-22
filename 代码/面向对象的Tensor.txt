@@ -1,0 +1,65 @@
+面向对象的Tensor
+#include<iostream>
+using namespace std;
+class Tensor {
+private:
+	int* data;
+	int size;
+public:
+	Tensor();
+	void CreateTensor(int dim_num, int* dim_value);
+	int GetSize();
+	int GetElement(int dim_num,int* dim_index, int* dim_value);
+	void Display(int dim_num, int* dim_value);
+}t ;
+
+Tensor::Tensor() {
+	data = nullptr;
+	size = 1;
+}
+void Tensor::CreateTensor(int dim_num, int* dim_value) {
+	for (int i = 0; i < dim_num; i++)
+		size *= dim_value[i];
+	data = new int[size];
+	for (int i = 0; i < size; i++)
+		data[i] = i+1;
+}
+int Tensor::GetSize() {
+	return size;
+}
+int Tensor::GetElement(int dim_num,int* dim_index, int* dim_value) {
+	int position;
+	position = 0;
+		for (int j = 0; j < dim_num; j++)
+		{
+			int m = dim_index[j];
+			for (int i = j+1; i < dim_num; i++) 
+			m *= dim_value[i];
+			position += m;
+		}
+		return data[position];
+}
+void Tensor::Display(int dim_num, int* dim_value) {
+	for (int i = 0; i < size; i++)
+	{
+		cout << data[i];
+		if ((i + 1) % dim_value[dim_num - 1] != 0)
+			cout << ' ';
+		else cout << endl;
+	}
+}
+int main() {
+	int num;
+	cin >> num;
+	int value[10000];
+	for (int i = 0; i < num; i++)
+	cin >> value[i];
+	int index[10000];
+	for (int i = 0; i < num; i++)
+		cin >> index[i];
+	t.CreateTensor(num,value);
+	cout<<t.GetSize()<<endl;
+	cout << t.GetElement(num, index, value)<<endl;
+	t.Display(num, value);
+	return 0;
+}

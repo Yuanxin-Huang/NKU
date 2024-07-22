@@ -1,0 +1,80 @@
+放大位图
+数组：放大位图
+
+total submissions: 74timespassed: 25timespassing rate: 33.78%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+位图（bitmap）亦称为点阵图像或栅格图像，是由称作像素（图片元素）的单个点组成的。这些点可以进行不同的排列和染色以构成图样。当放大位图时，可以看见赖以构成整个图像的无数单个方块。扩大位图尺寸的效果是增大单个像素，从而使线条和形状显得参差不齐。然而，如果从稍远的位置观看它，位图图像的颜色和形状又显得是连续的。
+
+现在请你设计一个程序将原来n*n的图像放大k倍。
+
+例如，将2*2的点阵放大2倍
+1	0
+0	1
+
+经过放大后新的点阵为
+1	1	0	0
+1	1	0	0
+0	0	1	1
+0	0	1	1
+
+输出样例的每个数字后用空格隔开
+
+
+输入描述：
+
+第一行的两个数字第一个为n的值，第二个为k的值
+
+之后的n行每行n个数字，表示位图的值
+
+
+输出描述：
+
+输出放大后的新点阵，以空格分离
+
+
+
+sample inpput and output
+样例1
+input:
+2 2
+1 0
+0 1
+output:
+1 1 0 0
+1 1 0 0
+0 0 1 1
+0 0 1 1
+
+
+
+#include <stdio.h>
+int main() {
+	int n = 0, k = 0;
+	scanf("%d%d", &n, &k);
+	int a[20][20];
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			scanf("%d", &a[i][j]);
+		}
+	}
+	int b[100][100];
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			for (int m = 0; m < k; m++) {
+				for (int n = 0; n < k; n++) {
+					b[i * k + m][j * k + n] = a[i][j];
+				}
+			}
+		}
+	}
+	for (int i = 0; i < n*k; i++) {
+		for (int j = 0; j < n * k; j++) {
+			printf("%d", b[i][j]);
+		}
+		printf("\n");
+	}
+	return 0;
+}

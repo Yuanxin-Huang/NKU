@@ -1,0 +1,41 @@
+字符串处理
+字符串处理
+
+总提交数: 37次通过数: 19次通过率: 51.35%
+
+内存限制: 20971520(BYTE)时间限制: 2000(MS)输入限制: 1000(行)输出限制: 1000(行)
+题目描述
+
+输入一个由大小写字母及数字组成的字符串。将字符串中的数字删除，再将字符串中的小写字母转化为相应的大写字母，大写字母转化为相应的小写字母。输出该字符串。
+输入格式
+
+由大写字母、小写字母及数字组成的字符串，长度不超过50。
+输出格式
+
+按规则输出变换后的字符串。
+#define   _CRT_SECURE_NO_WARNINGS 1
+#include <stdio.h>
+#include<string.h>
+int main() {
+	char str[100];
+	gets_s(str);
+	int i,k=0;
+	int n = strlen(str);
+	for (i = 0; str[i] != '\0'; i++) {
+		if (str[i] >= 'A' && str[i] <= 'Z') {
+			str[i] = str[i] - 'A' + 'a';
+		}
+		else if (str[i] >= 'a' && str[i] <= 'z') {
+			str[i] = str[i] - 'a' + 'A';
+		}
+		else {
+			k++;
+		}
+	}
+	for (i = 0; i<n; i++) {
+		if (str[i] >= '0' && str[i] <= '9')
+			continue;
+		printf("%c",str[i]);
+	}
+	return 0;
+}

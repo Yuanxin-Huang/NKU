@@ -1,0 +1,16 @@
+#include<string.h>
+#include<stdio.h>
+int main() {
+	char str1[101], str2[101], str3[101], str[101];
+	gets_s(str1),gets_s(str2),gets_s(str3);
+	if (strcmp(str1, str2) > 0) {
+		if (strcmp(str1, str3) > 0) strcpy(str, str1);
+		else strcpy(str,str3);
+	}
+	else {
+		if (strcmp(str2, str3) > 0) strcpy(str,str2);
+		else strcpy(str, str3);
+	}
+	printf("%s",str);
+	return 0;
+}

@@ -1,0 +1,36 @@
+低位宽浮点的四则运算
+
+total submissions: 102timespassed: 36timespassing rate: 35.29%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+在完成FPX的构建之后，我们需要根据规则完成FPX的四则运算。
+
+注意，FPX的四则运算结果仍然为FPX格式的值，所有的操作不涉及四舍五入运算，仅仅使用位截断和值截断。
+
+
+输入：第一行两个整型e,f，用于表示FPX的指数位数和尾数位数
+
+            第二行两个浮点数和一个四则运算符(+-*/)，表示用于量化的FP32浮点数输入以及运算
+
+
+输出：
+
+            第一行输出量化后的两个FPX浮点数
+
+           第二行输出计算后的FPX浮点数
+
+注意：量化的意思是将高位宽的数截断（exp为值截断或者尾数为低位截断）为低位宽的表示，需要处理0值。
+
+FPX浮点数的输出需要重载<<运算符（FPX转换为FP32再输出）
+
+sample inpput and output
+样例1
+input:
+2 4
+1.25 0.90625 /
+output:
+1.25
+0.90625
+1.375

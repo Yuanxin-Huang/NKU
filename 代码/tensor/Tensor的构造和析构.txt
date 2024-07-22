@@ -1,0 +1,218 @@
+Tensor类的构造与析构
+
+total submissions: 47timespassed: 15timespassing rate: 31.91%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+构造一个Tensor 类，其具有构造函数Tensor, 其具有数据成员float* data; int* shape; int ndim; 分别表示Tensor的数据、形状和维度。
+
+请实现Tensor的构造函数和析构函数：Tensor()， Tensor(int dims, int* shape), Tensor(const Tensor& t), Tensor(const Tensor& t, int index)、Tensor(int dims, int* shape, float* data)以及~Tensor()等构造和析构函数，其中Tensor(const Tensor& t, int index)表示返回t第index行的Tensor对象。比如index=0，t的shape=[1,2,3]表示返回t的第0行的Tensor，即t[0,:,:]。
+
+请注意，Tensor的数据成员data和shape在构造函数中需要分配内存，而在析构函数中需要释放内存。
+
+你还需要重载一个<<运算符用于输出Tensor对象，该重载函数将Tensor的所有数据按照最后两个维度的大小构建为多个小矩阵，并且隔行输出这些矩阵。
+
+输入：第一行为一个整数n，表示Tensor的维度。接下来n行，每行一个整数，表示Tensor的shape。第三行为1个整数index。设置随机种子为0，使用mt19937引擎和uniform_real_distribution<float>生成一个随机(0.0, 1.0)之间浮点数按行优先填充Tensor对象的数据区域。
+
+输出：构造Tensor(int dims, int* shape)并输出Tensor t。构造Tensor(t)并输出。构造Tensor(t.dims,t.shape,t.data)并输出该Tensor。构造Tensor(t,index)并输出。构造Tensor(t.dims-1,t.shape+1,t.data+index*bias)并输出，其中bias等于t.shape[1]*t.shape[2]*...*t.shape[-1]，并且观察其与Tensor(t,index)的区别。
+
+确保你的程序没有内存错误
+
+sample inpput and output
+样例1
+input:
+3
+1 2 3
+0
+output:
+Tensor t:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+
+Tensor tCopy:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+
+Tensor tWithShape:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+
+Tensor tRow:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+
+Tensor tModified:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+
+
+
+#include<iostream>
+#include<random>
+using namespace std;
+class Tensor {
+private:
+    float* data;
+    int* shape;
+    int dim;
+    int size;
+public:
+    float* getData() {
+        return data;
+    }
+    int* getShape() {
+        return shape;
+    }
+    Tensor() {}
+    Tensor(int dims, int* shape) {
+        dim = dims;
+        this->shape = new int[dims];
+        for (int i = 0; i < dims; i++) {
+            this->shape[i] = shape[i];
+        }
+        int size = 1;
+        for (int i = 0; i < dims; i++) {
+            size *= shape[i];
+        }
+        data = new float[size];
+        mt19937 generator(0);
+        uniform_real_distribution<float> distribution(0.0, 1.0);
+        for (int i = 0; i < size; i++) {
+            data[i] = distribution(generator);
+        }
+
+    }
+    Tensor(const Tensor& t) {
+        dim = t.dim;
+        shape = new int[dim];
+        for (int i = 0; i < dim; i++) {
+            shape[i] = t.shape[i];
+        }
+        int size = 1;
+        for (int i = 0; i < dim; i++) {
+            size *= shape[i];
+        }
+        data = new float[size];
+        for (int i = 0; i < size; i++) {
+            data[i] = t.data[i];
+        }
+    }
+    Tensor(const Tensor& t, int* shape, float* data) {
+        dim = t.dim;
+        this->shape = new int[dim];
+        for (int i = 0; i < dim; i++) {
+            this->shape[i] = shape[i];
+        }
+        this->data = data;
+    }
+    Tensor(const Tensor& t, int index) {
+        dim = t.dim - 1;
+        shape = new int[dim];
+        for (int i = 0; i < dim; i++) {
+            shape[i] = t.shape[i + 1];
+        }
+        int size = 1;
+        for (int i = 0; i < dim; i++) {
+            size *= shape[i];
+        }
+        data = new float[size];
+        for (int i = 0; i < size; i++) {
+            data[i] = t.data[index * size + i];
+        }
+    }
+    Tensor(int dims, int* shape, float* data) {
+        dim = dims;
+        this->shape = new int[dims];
+        for (int i = 0; i < dims; i++) {
+            this->shape[i] = shape[i];
+        }
+        this->data = data;
+    }
+
+    ~Tensor() {}
+    friend ostream& operator<<(ostream& cout, const Tensor& t);
+};
+ostream& operator<<(ostream& cout, const Tensor& t)
+{
+    int last_dim1 = t.shape[t.dim-1];
+    int last_dim2 = t.shape[t.dim-2];
+    int total_size = last_dim1 * last_dim2;
+        if (t.shape[t.dim - 1] < 3) {
+            for (int i = 0; i < t.size; i++) {
+                cout << t.data[i];
+                if ((i + 1) % t.shape[1] != 0)
+                    cout << " ";
+                else
+                    cout << endl;
+            }
+        }
+        else {
+            int count_size = 1;
+            for (size_t i = 0; i < t.dim - 2; ++i) {
+                count_size *= t.shape[i];
+            }
+            for (int i = 0; i < count_size; i++) {
+                for (int j = 0; j < last_dim1; j++) {
+                    for (int k = 0; k < last_dim2; k++) {
+                        int position = i * total_size + j * last_dim2 + k;
+                        cout << t.data[position];
+                        if ((position + 1) % t.shape[t.dim - 1] != 0)
+                            cout << " ";
+                        else
+                            cout << endl;
+                    }
+                }
+                if (i < count_size - 1) {
+                    cout << endl;
+                }
+            }
+        }
+    return cout;
+}
+
+
+
+int main(){
+    int n;
+    cin >> n;
+    int* shape = new int[n];
+    for (int i = 0; i <n; i++) {
+        cin >> shape[i];
+    }
+    cin.ignore();
+    int index;
+    cin >> index;
+
+
+    Tensor t(n, shape);
+    cout << "Tensor t:" << endl;
+    cout << t << endl;
+
+    Tensor tCopy(t);
+    cout << "Tensor tCopy:" << endl;
+    cout << tCopy<<endl ;
+
+    Tensor tWithShape(n, shape, t.getData());
+    cout << "Tensor tWithShape:" << endl;
+    cout << tWithShape<<endl;
+
+
+    Tensor tRow(t, index);
+    cout << "Tensor tRow:" << endl;
+    cout << tRow<<endl;
+
+    int bias = 1;
+    for (int i = 1; i < n; ++i) {
+        bias *= shape[i];
+    }
+
+    Tensor tModified(n - 1, shape + 1, t.getData() + index * bias);
+    cout << "Tensor tModified:" << endl;
+    cout << tModified;
+
+
+    delete[] t.getShape();
+    delete[] t.getData();
+    return 0;
+}

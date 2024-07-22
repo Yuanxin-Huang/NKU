@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include<math.h>
+#include<string.h>
+int main()
+{
+    int maxn, minn, i, j, m, k;
+    i = 2;
+    j = 0;
+    char word[101];
+    gets(word);
+    int a[101] = {0};
+    for (int x = 0; word[x] != '\0'; x++) {
+        a[word[x] - 97]++;//按照字母表顺序储存每个字母出现次数
+    }
+    maxn = 1;
+    minn = 100;
+    for (int y = 0; y < 26; y++) {
+        if (maxn > a[y]) maxn = maxn;
+        else maxn = a[y];//求出最大次数赋值给mann
+        if (a[y] == 0) continue;//跳过次数为0的字母
+        else {
+            if (minn > a[y]) minn = a[y];//求出最小次数赋值给minn
+            else minn = minn;
+        }
+    }
+    if (minn == 0) minn = 1;
+    m = maxn - minn;
+    k = sqrt(m);//求素数--先求出平方根
+    if (m <= 1) {//先判断特殊情况
+        printf("No Answer\n0");
+        return 0;
+    }
+    for (i = 2; i <= k; i++) {
+        if (m % i == 0) break;//循环求因数
+    }
+    if (i > k) {//判断素数
+        printf("Lucky Word\n");
+        printf("%d", m);
+        return 0;
+    }
+    else printf("No Answer\n0");
+    return 0;
+}

@@ -1,0 +1,170 @@
+显式的位操作
+
+total submissions: 189timespassed: 12timespassing rate: 6.35%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+请实现bitop(int num1, int num2, char op, int start_bit, int end_bit)函数，其中num1，num2为两个操作数，op为位操作符号，start_bit和end_bit为从start_bit号位开始到end_bit位为止需要参与运算的位。
+
+举例：对于一个二进制串"00100001"，设置start_bit=0, end_bit为3，则仅处理该二进制串的低3位二进制位，其他位填充0，不允许溢出到规定位以外的位。
+
+op的可选运算为:&,|,^,~,>,<，分别表示按位与、或、异或、非（仅对num1做操作）、右移、左移操作（对num1左/右移num2个位，此时num2仅做参数，不需要对num2选择参与的位）。
+
+输入错误则输出"error"。
+
+输入：5个值分别表示函数的五个参数。
+
+输出：返回计算结果，请以10进制表示。
+
+sample inpput and output
+样例2
+input:
+15 2 > 1 4
+output:
+2
+样例1
+input:
+7 8 | 1 4
+output:
+1
+
+
+#include <iostream>
+#include <bitset>
+using namespace std;
+int bitop(int num1, int num2, char op, int start_bit, int end_bit) {
+	if (start_bit < 0 || end_bit >= 32 || start_bit > end_bit) {
+		return -1;
+	}
+
+	int mask = 0;
+	for (int i = start_bit; i < end_bit; i++) {
+		if (i == 0) {
+			mask += 1;
+			continue;
+		}
+		mask += (1 << i);
+	}
+	switch (op) {
+	case '&':
+		return (num1 & num2);
+	case '|':
+		return (num1 | num2);
+	case '^':
+		return (num1 ^ num2);
+	case '~':
+		return (~num1);
+	case '>':
+		return (num1 >> num2);
+	case '<':
+		return (num1 << num2);
+	default:
+		return -1;
+	}
+}
+
+int main() {
+	int num1, num2;
+	char op;
+	int start_bit, end_bit;
+	cin >> num1 >> num2 >> op >> start_bit >> end_bit;
+
+	int result = bitop(num1, num2, op, start_bit, end_bit);
+	if (result != -1) {
+		int temp = 0;
+		for (int i = start_bit; i < end_bit; i++) {
+			if (i == 0) {
+				temp+=1;
+				continue;
+			}
+			temp += (1 << i);
+		}
+		result = result & temp;
+		cout << result;
+	}
+	else {
+		cout << "error";
+	}
+	return 0;
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <iostream>
+using namespace std;
+int twice(int e) {
+	if (e == 0)
+		return 1;
+	else {
+		int result = 1;
+		for (int i = 1; i <= e; i++)
+			result = result*2;
+		return result;
+	}
+}
+void output(int num1,int start_bit, int end_bit) {
+	int temp = 0;
+	for (int i = start_bit; i < end_bit; i++)
+		temp += twice(i);
+	num1 = num1&temp;
+	cout<< num1;
+}
+void bitop(int num1, int num2, char op, int start_bit, int end_bit) {
+	if (start_bit < 0 || end_bit > 32)
+		cout << "error";
+	else if (op == '&')
+	{
+		int num;
+		num = num1&num2;
+		output(num, start_bit, end_bit);
+	}
+	else if (op == '|')
+	{
+		int num;
+		num = num1|num2;
+		output(num, start_bit, end_bit);
+	}
+	else if (op == '^')
+	{
+		int num;
+		num = num1^num2;
+		output(num, start_bit, end_bit);
+	}
+	else if (op == '~')
+	{
+		int num;
+		num = ~num1;
+		output(num, start_bit, end_bit);
+	}
+	else if (op == '<')
+	{
+		int temp = 0;
+		for (int i = start_bit; i <= end_bit; i++)
+			temp += twice(i);
+		num1 = num1 & temp;
+
+
+		int num;
+		num = num1<<num2;
+		output(num, start_bit, end_bit);
+	}
+	else if (op == '>')
+	{
+
+		int temp = 0;
+		for (int i = start_bit; i <= end_bit; i++)
+			temp += twice(i);
+		num1 = num1 & temp;
+
+		int num;
+		num = num1 >> num2;
+		output(num, start_bit, end_bit);
+	}
+	else cout << "error";
+}
+int main() {
+	int n1, n2, start, end;
+	char operation;
+	cin >> n1 >> n2 >> operation >> start >> end;
+	bitop(n1, n2, operation, start, end);
+	return 0;
+}

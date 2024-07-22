@@ -1,0 +1,68 @@
+IEEE754浮点数加减
+
+
+
+
+
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+
+struct IEEE754float
+{
+        float f;
+        //符号位
+        unsigned int sign;
+
+        //指数位
+        unsigned int exponent;
+
+        //尾数位
+        unsigned int fraction;
+
+
+        IEEE754float(float f)
+        {
+                this->f = f;
+                //用int指针重新解释浮点数
+                float* ptrf = &f;
+                int* ptri = reinterpret_cast<int*>(ptrf);
+                int i_f = *ptri;
+
+                sign =(i_f >> 31)&1;
+                exponent = (i_f >> 23) & 0xFF;
+                fraction = i_f & 0x7FFFFF;
+                //隐含1
+                fraction = (fraction | 1 << 23);
+
+        }
+
+        void display()
+        {
+                cout << 1-sign << ' ' << exponent << ' ' << fraction << '\n';
+
+        }
+
+};
+
+
+int main()
+{
+        float f1,f2,f3;
+        char op;
+        cin >> f1>>f2>>op;
+        IEEE754float fa(f1),fb(f2);
+        fa.display();
+        fb.display();
+
+        if ('+' == op)
+                f3 = f1 + f2;
+        else
+                f3 = f1 - f2;
+        IEEE754float fc(f3);
+        fc.display();
+        cout << fc.f;
+
+        return 0;
+}

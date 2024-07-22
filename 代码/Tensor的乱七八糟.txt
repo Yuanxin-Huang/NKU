@@ -1,0 +1,466 @@
+////#include<iostream>
+//#include<random>
+//using namespace std;
+//class Tensor {
+//private:
+//    float* data;
+//    int dim_num;
+//    int size;
+//public:
+//    void generate(int size, float* data);
+//    void createTensor(int dim_num, int* dim_value);
+//    void Display(int dim_num, int* dim_value);
+//} Tensor;
+////生成随机数
+//void Tensor::generate(int size, float* data) {
+//    mt19937 generator(0);
+//    uniform_real_distribution<float> distribution(0.0, 1.0);
+//    for (int i = 0; i < size; ++i) {
+//        data[i] = distribution(generator);
+//    }
+//}
+//
+//void destroy(float* data) {
+//    delete[]data;
+//}
+////创造动态数组分配内存
+//void Tensor::createTensor(int dim_num, int* dim_value) {
+//    size = 1;
+//    for (int i = 0; i < dim_num; i++) {
+//        size *= dim_value[i];
+//    }
+//    data = new float[size];
+//    generate(size, data);
+//}
+////输出数据
+//void Tensor::Display(int dim_num, int* dim_value) {
+//    int last_dim1 = dim_value[dim_num - 1];
+//    int last_dim2 = dim_value[dim_num - 2];
+//    int total_size = last_dim1 * last_dim2;//最后两个维度的元素个数
+//    int count_size = 1;
+//    for (int i = 0; i < dim_num - 2; ++i) {
+//        count_size *= dim_value[i];//除最后两个维度之前那些维度个数
+//    }
+    //for (int i = 0; i < count_size; i++) {
+    //    for (int j = 0; j < last_dim1; j++) {
+    //        for (int k = 0; k < last_dim2; k++) {
+    //            int position = i * total_size + j * last_dim2 + k;
+    //            cout << data[position];
+    //            if (k != last_dim1 - 1) {
+    //                cout << " ";
+    //            }
+    //        }
+    //        cout << endl;
+    //    }
+    //    if (i < count_size - 1) {
+    //        cout << endl;
+    //    }
+    //}
+//}
+//
+//int main() {
+//    int dim_num;
+//    cin >> dim_num;
+//    int* dim_value = new int[dim_num];
+//    for (int i = 0; i < dim_num; i++) {
+//        cin >> dim_value[i];
+//    }
+//    Tensor.createTensor(dim_num, dim_value);
+//    Tensor.Display(dim_num, dim_value);
+//
+//    delete[]dim_value;
+//    return 0;
+//}
+//#include<iostream>  
+//#include<random>  
+//#include<vector>
+//using namespace std;
+//class Tensor {
+//private:
+//    float* data;
+//    vector<int> shape;
+//    int size;
+//public:
+//    void createTensor(vector<int>shape);
+//    void generate(int size, float* data);
+//    void Display(float*data);
+//    int getSize()  {
+//        return size;
+//    }
+//    float*getData(){
+//       return data;
+//    }
+//}tensor;
+//void Tensor::generate(int size, float* data) {
+//    mt19937 generator(0);
+//    uniform_real_distribution<float> distribution(0.0, 1.0);
+//    for (int i = 0; i < size * 2; ++i) {
+//        data[i] = distribution(generator);
+//    }
+//}
+//void Tensor::createTensor(vector<int>shape) {
+//    this->shape = shape;
+//    size = 1;
+//    for (int i = 0; i < shape.size(); i++) {
+//        size *= shape[i];
+//    }
+//    data = new float[size*3];
+//    generate(size, data);
+//    
+//}
+//   /* void Tensor::Display(float*data){
+//        int last_dim1 = shape.back();
+//        int last_dim2 = shape[shape.size() - 2];
+//        int total_size = last_dim1 * last_dim2;
+//        for (int x = 0; x < size*2; x += size) {
+//            if (shape.size() < 3) {
+//                for (int i = x; i < size + x; i++) {
+//                    cout << data[i];
+//                    if ((i + 1) % shape[1] != 0)
+//                        cout << " ";
+//                    else
+//                        cout << endl;
+//                }
+//            }
+//            else {
+//                int count_size = 1;
+//                for (size_t i = 0; i < shape.size() - 2; ++i) {
+//                    count_size *= shape[i];
+//                }
+//                for (int i = 0; i < count_size; i++) {
+//                    for (int j = 0; j < last_dim1; j++) {
+//                        for (int k = 0; k < last_dim2; k++) {
+//                            int position = i * total_size + j * last_dim2 + k + x;
+//                            cout << data[position];
+//                            if ((position + 1) % shape[shape.size() - 1] != 0)
+//                                cout << " ";
+//                            else
+//                                cout << endl;
+//                        }
+//                    }
+//                    if (i < count_size - 1) {
+//                        cout << endl;
+//                    }
+//                }
+//            }
+//            if (x < size) {
+//                cout << endl;
+//                cout << "Tensor 2:" << endl;
+//            }
+//        }
+//    }*/
+//
+//int main() {
+//    Tensor tensor;
+//    vector<int> shape; 
+//    int dim_value;
+//    while (cin >> dim_value) {
+//        shape.push_back(dim_value);
+//        if (cin.peek() == '\n') {  
+//            break;
+//        }
+//        cin.ignore(); 
+//    }
+//
+//    tensor.createTensor(shape);
+//    cout << "Tensor 1:" << endl;
+//    tensor.Display(tensor.getData());
+//    cout << endl;
+//    cout << "Tensor 1 + Tensor 2:" << endl;
+//
+//    int last_dim1 = shape.back();
+//    int last_dim2 = shape[shape.size() - 2];
+//    int total_size = last_dim1 * last_dim2;
+//
+//    for (int i = 0; i < tensor.getSize(); i++) {
+//        cout << tensor.getData()[i] + tensor.getData()[i + tensor.getSize()];
+//        if ((i + 1) % shape[shape.size() - 1] != 0)
+//            cout << " ";
+//        else
+//            cout << endl;
+//        if ((i+1)%total_size==0&&shape.size()>2&&(i+1)< tensor.getSize()) {
+//            cout << endl;
+//        }
+//    }
+//    delete[]tensor.getData();
+//    return 0;
+//}
+// 
+
+
+//#include<iostream>
+//using namespace std;
+//int main() {
+//	float x, y;
+//	char z;
+//	cin >> x >> y>>z;
+//	float result;
+//	if (z == '+')
+//		result = x + y;
+//	else
+//		result = x - y;
+//}
+
+//矩阵
+//#include <iostream>  
+//#include <cstdlib>    
+//#include<random>
+//using namespace std;
+//
+//class Matrix {
+//private:
+//    float** data;
+//    int rows;
+//    int cols;
+//public:
+//    Matrix(int r, int c) {
+//        rows = r;
+//        cols = c;
+//    }
+//    float** getData() {
+//        return data;
+//    }
+//    void createMatrix() {
+//        mt19937 generator(0);
+//        uniform_real_distribution<float> distribution(0, 1.0);
+//        data = new float* [rows];
+//        for (int i = 0; i < rows; i++) {
+//            data[i] = new float[cols];
+//            for (int j = 0; j < cols; j++) {
+//                data[i][j] = distribution(generator);
+//            }
+//        }
+//    }
+//    float calculateDeterminant(float**data,int n) {
+//        float determinant = 0.0;
+//        if (n == 1) {
+//            return data[0][0];
+//        }
+//
+//        else if (n == 2) {
+//            return data[0][0] * data[1][1] - data[0][1] * data[1][0];
+//        }
+//        else {
+//            for (int k = 0; k < n; k++) {
+//                float** data2;
+//                data2 = new float* [n - 1];
+//                for (int i = 0; i < n - 1; i++)
+//                    data2[i] = new float[n - 1];
+//
+//                for (int i = 0; i < n - 1; i++) {
+//                    for (int j = 0; j < n - 1; j++) {
+//                        int m = j < k ? j : j + 1;
+//                        data2[i][j] = data[i + 1][m];
+//                    }
+//                }
+//                if (data[0][k]!=0)
+//                    determinant += data[0][k] * calculateDeterminant(data2, n - 1) * (((2 + k) % 2) ? -1 : 1);
+//
+//                for (int i = 0; i < n - 1; i++) {
+//                    delete[]data2[i];
+//                }
+//                delete[]data2;
+//            }
+//        }
+//        return determinant;
+//    }
+//
+//
+//    void Display() {
+//        for (int i = 0; i < rows; i++) {
+//            for (int j = 0; j < cols; j++) {
+//                cout << data[i][j] << " ";
+//            }
+//            cout << endl;
+//        }
+//    }
+//    };
+//
+//    int main() {
+//        int rows, cols;
+//        cin >> rows >> cols;
+//        Matrix matrix(rows, cols);
+//        if (rows != cols) {
+//            cout << "error";
+//            return 0;
+//        }
+//        else {
+//            matrix.createMatrix();
+//            matrix.Display();
+//            cout << matrix.calculateDeterminant(matrix.getData(), rows);
+//            return 0;
+//        }
+//    }
+//Tensor()， Tensor(int dims, int* shape), Tensor(const Tensor& t), 
+// Tensor(const Tensor& t, int index)、Tensor(int dims, int* shape, float* data)
+// 以及~Tensor()等构造和析构函数，
+// 其中Tensor(const Tensor& t, int index)表示返回t第index行的Tensor对象。
+// 比如index=0，t的shape=[1,2,3]表示返回t的第0行的Tensor，即t[0,:,:]。
+
+//#include<iostream>
+//#include<random>
+//using namespace std;
+//class Tensor {
+//private:
+//    float* data;
+//    int* shape;
+//    int dim;
+//    int size;
+//public:
+//    float* getData() {
+//        return data;
+//    }
+//    int* getShape() {
+//        return shape;
+//    }
+//    Tensor() {}
+//    Tensor(int dims, int* shape) {
+//        dim = dims;
+//        this->shape = new int[dims];
+//        for (int i = 0; i < dims; i++) {
+//            this->shape[i] = shape[i];
+//        }
+//        int size = 1;
+//        for (int i = 0; i < dims; i++) {
+//            size *= shape[i];
+//        }
+//        data = new float[size];
+//        mt19937 generator(0);
+//        uniform_real_distribution<float> distribution(0.0, 1.0);
+//        for (int i = 0; i < size; i++) {
+//            data[i] = distribution(generator);
+//        }
+//
+//    }
+//    Tensor(const Tensor& t) {
+//        dim = t.dim;
+//        shape = new int[dim];
+//        for (int i = 0; i < dim; i++) {
+//            shape[i] = t.shape[i];
+//        }
+//        int size = 1;
+//        for (int i = 0; i < dim; i++) {
+//            size *= shape[i];
+//        }
+//        data = new float[size];
+//        for (int i = 0; i < size; i++) {
+//            data[i] = t.data[i];
+//        }
+//    }
+//    Tensor(const Tensor& t, int* shape, float* data) {
+//        dim = t.dim;
+//        this->shape = new int[dim];
+//        for (int i = 0; i < dim; i++) {
+//            this->shape[i] = shape[i];
+//        }
+//        this->data = data;
+//    }
+//    Tensor(const Tensor& t, int index) {
+//        dim = t.dim - 1;
+//        shape = new int[dim];
+//        for (int i = 0; i < dim; i++) {
+//            shape[i] = t.shape[i + 1];
+//        }
+//        int size = 1;
+//        for (int i = 0; i < dim; i++) {
+//            size *= shape[i];
+//        }
+//        data = new float[size];
+//        for (int i = 0; i < size; i++) {
+//            data[i] = t.data[index * size + i];
+//        }
+//    }
+//    Tensor(int dims, int* shape, float* data) {
+//        dim = dims;
+//        this->shape = new int[dims];
+//        for (int i = 0; i < dims; i++) {
+//            this->shape[i] = shape[i];
+//        }
+//        this->data = data;
+//    }
+//    ~Tensor() {}
+//    friend ostream& operator<<(ostream& cout, const Tensor& t);
+//};
+//ostream& operator<<(ostream& cout, const Tensor& t)
+//{
+//    int last_dim1 = t.shape[t.dim-1];
+//    int last_dim2 = t.shape[t.dim-2];
+//    int total_size = last_dim1 * last_dim2;
+//        if (t.shape[t.dim - 1] < 3) {
+//            for (int i = 0; i < t.size; i++) {
+//                cout << t.data[i];
+//                if ((i + 1) % t.shape[1] != 0)
+//                    cout << " ";
+//                else
+//                    cout << endl;
+//            }
+//        }
+//        else {
+//            int count_size = 1;
+//            for (size_t i = 0; i < t.dim - 2; ++i) {
+//                count_size *= t.shape[i];
+//            }
+//            for (int i = 0; i < count_size; i++) {
+//                for (int j = 0; j < last_dim1; j++) {
+//                    for (int k = 0; k < last_dim2; k++) {
+//                        int position = i * total_size + j * last_dim2 + k;
+//                        cout << t.data[position];
+//                        if ((position + 1) % t.shape[t.dim - 1] != 0)
+//                            cout << " ";
+//                        else
+//                            cout << endl;
+//                    }
+//                }
+//                if (i < count_size - 1) {
+//                    cout << endl;
+//                }
+//            }
+//        }
+//    return cout;
+//}
+//
+//
+//
+//int main(){
+//    int n;
+//    cin >> n;
+//    int* shape = new int[n];
+//    for (int i = 0; i <n; i++) {
+//        cin >> shape[i];
+//    }
+//    cin.ignore();
+//    int index;
+//    cin >> index;
+//
+//
+//    Tensor t(n, shape);
+//    cout << "Tensor t:" << endl;
+//    cout << t << endl;
+//
+//    Tensor tCopy(t);
+//    cout << "Tensor tCopy:" << endl;
+//    cout << tCopy<<endl ;
+//
+//    Tensor tWithShape(n, shape, t.getData());
+//    cout << "Tensor tWithShape:" << endl;
+//    cout << tWithShape<<endl;
+//
+//
+//    Tensor tRow(t, index);
+//    cout << "Tensor tRow:" << endl;
+//    cout << tRow<<endl;
+//
+//    int bias = 1;
+//    for (int i = 1; i < n; ++i) {
+//        bias *= shape[i];
+//    }
+//
+//    Tensor tModified(n - 1, shape + 1, t.getData() + index * bias);
+//    cout << "Tensor tModified:" << endl;
+//    cout << tModified;
+//
+//
+//    delete[] t.getShape();
+//    delete[] t.getData();
+//    return 0;
+//}

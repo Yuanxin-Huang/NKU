@@ -1,0 +1,27 @@
+丑陋数 ugly numbers
+#define   _CRT_SECURE_NO_WARNINGS 1
+#include<stdio.h>
+#define maxn 1555
+int ugly[maxn] = { 0,1 };
+int Min(int a, int b) {
+    return a > b ? b : a;
+}
+int main() {
+    void uglyy();
+    uglyy();
+    int n;
+    while (scanf("%d", &n), n != 0) {
+        printf("%d\n", ugly[n]);
+    }
+    return 0;
+}
+void uglyy() {
+    int i, a2, a3, a5;
+    a2 = a3 = a5 = 1;
+    for (i = 2; i <= 1500; i++) {
+        ugly[i] = Min(ugly[a2] * 2, Min(ugly[a3] * 3, ugly[a5] * 5));
+        if (ugly[i] == ugly[a2] * 2) a2++;
+        if (ugly[i] == ugly[a3] * 3) a3++;
+        if (ugly[i] == ugly[a5] * 5) a5++;
+    }
+}

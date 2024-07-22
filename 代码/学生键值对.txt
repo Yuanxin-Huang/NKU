@@ -1,0 +1,80 @@
+创建一个学生类来表示C++班级的学生。这个类应该有一个静态数据成员来表示所有学生的总数，一个静态数据成员来存储所有学生的姓名和学号的映射关系，一个常量数据成员来表示每个学生的学号，以及一个常量函数成员来通过学号获取学生的姓名或者通过姓名获取学生学号。该类还包含一个静态函数成员，该函数可以按照学生姓名的字母顺序打印所有的学生的姓名。
+
+
+输入：n+1行，前n行每行分别输入id和name，第n+1行输入-1 nn，表示输入停止
+
+输出：第一行输出学生总数
+
+接下来n行按照学生姓名的字母顺序打印所有的学生的姓名
+
+sample inpput and output
+样例1
+input:
+1 Alice
+2 Bob
+3 Charlie
+-1 nn
+output:
+3
+Alice
+Bob
+Charlie
+
+
+
+
+
+
+
+
+
+
+#include<iostream>
+#include<map>
+#include<algorithm>
+#include<vector>
+#include<string>
+using namespace std;
+
+class Student {
+private:
+	static int totalStudents;
+	static map<int, string>studentMap;
+	const int studentId;
+	const string studentName;
+public:
+	Student(int id, const string &name):studentId(id),studentName(name){
+		totalStudents++;
+		studentMap[id] = name;
+	}
+	static void print() {
+		vector<string>studentNames;
+		for (const auto& pair : studentMap) {
+			studentNames.push_back(pair.second);
+		}
+		sort(studentNames.begin(), studentNames.end());
+		for (const auto& name : studentNames) {
+			cout << name <<endl;
+		}
+	}
+	static int getTotalStudents() {
+		return totalStudents; 
+	}
+};
+int Student::totalStudents = 0;
+map<int, string> Student::studentMap;
+int main() {
+	int id;
+	string name;
+	vector<Student> students;
+	while (cin >> id, cin >> name) {
+		cin.ignore();
+		if (id == -1) {
+			break;
+		}
+		students.emplace_back(id, name);
+	}
+	cout << Student::getTotalStudents() << endl;
+	Student::print();
+	return 0;
+}

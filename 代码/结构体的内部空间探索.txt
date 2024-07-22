@@ -1,0 +1,65 @@
+结构体的内部空间探索
+
+total submissions: 51timespassed: 23timespassing rate: 45.10%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+理解结构体和class在内存中的编码和存储方式。定义一个struct结构体，其包含1个int、2个char、1个float、1个char、1个double、1个int、1个char的数据。首先按照定义顺序输入对应的7个值，然后在第一行顺序输出结构体中的每个成员的值；第二行计算并输出每个成员相对于第一个数据成员地址的相对偏移字节数（第一个成员的相对偏移为0字节，第二个为4，手动计算该静态偏移值）；第三行根据相对地址偏移来获取每个数据成员的首地址，然后根据该首地址获取每一个数据成员的值然后输出（验证手动计算的偏移值是否正确）；第四行输出该结构体的占用内存大小（sizeof）。
+
+input:
+1 a b 3.14 c 5.27 2 d
+output:
+1 a b 3.14 c 5.27 2 d
+0 4 5 8 12 16 24 28
+1 a b 3.14 c 5.27 2 d
+32
+
+#include<iostream>
+#include<stddef.h>
+using namespace std;
+typedef struct struct1{
+	int a;
+	char b[2];
+	float c;
+	char d;
+	double e;
+	int f;
+	char g;
+
+}struct1;
+int main(){
+	struct1 A;
+	cin >> A.a;
+	cin.ignore();
+	cin >> A.b[0] >> A.b[1];
+	cin >> A.c >> A.d >> A.e >> A.f >> A.g;
+
+	cout << A.a << " " << A.b[0] << " " << A.b[1] << " " << A.c 
+		<< " " << A.d << " " << A.e << " " << A.f << " " << A.g<<endl;
+
+	cout << (size_t)(&((struct struct1*)0)->a) << " " << (size_t)(&((struct struct1*)0)->b[0]) << " "
+		<< (size_t)(&((struct struct1*)0)->b[1]) << " " << (size_t)(&((struct struct1*)0)->c) << " "
+		<< (size_t)(&((struct struct1*)0)->d) << " " << (size_t)(&((struct struct1*)0)->e) << " "
+		<< (size_t)(&((struct struct1*)0)->f) << " " << (size_t)(&((struct struct1*)0)->g)<<endl;
+    
+    int* p = &A.a;
+    cout << *p << " ";
+    char* p1 = &A.b[0];
+    cout << *p1 << " ";
+    p1 += sizeof(char);
+    cout << *p1 << " ";
+    float* p2 = &A.c;
+    cout << *p2 << " ";
+    p1 += (size_t)(&((struct struct1*)0)->d) - (size_t)(&((struct struct1*)0)->b[1]);
+    cout << *p1 << " ";
+    double* p3 =&A.e;
+    cout << *p3 << " ";
+    p = &A.f;
+    cout << *p << " ";
+    p1 += (size_t)(&((struct struct1*)0)->g) - (size_t)(&((struct struct1*)0)->d);
+    cout << *p1 << endl;
+
+	cout << sizeof(A);
+    return 0;
+}

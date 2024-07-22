@@ -1,0 +1,176 @@
+实现Tensor的简单计算
+
+total submissions: 118timespassed: 20timespassing rate: 16.95%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+构建Tensor类型，并使用0作为随机种子，根据输入的shape，生成随机的Tensor对象。
+
+实现简单的两个Tensor的加，并输出Tensor相加的结果。
+
+输入：连续n那个整型数按空格隔开，表示Tensor的形状
+
+输出：生成的两个Tensor求和的结果，按照最后两维的形状隔行打印到屏幕
+
+sample inpput and output
+样例1
+input:
+2 3
+output:
+Tensor 1:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+
+Tensor 2:
+0.544883 0.847252 0.423655
+0.623564 0.645894 0.384382
+
+Tensor 1 + Tensor 2:
+1.0937 1.4401 1.13884
+1.46783 1.24866 1.24233
+样例2
+input:
+2 3 4
+output:
+Tensor 1:
+0.548814 0.592845 0.715189 0.844266
+0.602763 0.857946 0.544883 0.847252
+0.423655 0.623564 0.645894 0.384382
+
+0.437587 0.297535 0.891773 0.056713
+0.963663 0.272656 0.383442 0.477665
+0.791725 0.812169 0.528895 0.479977
+
+Tensor 2:
+0.568045 0.392785 0.925597 0.836079
+0.0710361 0.337396 0.0871293 0.648172
+0.0202184 0.368242 0.83262 0.957155
+
+0.778157 0.140351 0.870012 0.870087
+0.978618 0.473608 0.799159 0.800911
+0.461479 0.520477 0.780529 0.67888
+
+Tensor 1 + Tensor 2:
+1.11686 0.985629 1.64079 1.68034
+0.673799 1.19534 0.632012 1.49542
+0.443873 0.991805 1.47851 1.34154
+
+1.21574 0.437885 1.76179 0.9268
+1.94228 0.746264 1.1826 1.27858
+1.2532 1.33265 1.30942 1.15886
+
+#include<iostream>  
+#include<random>  
+#include<vector>
+using namespace std;
+class Tensor {
+private:
+    float* data;
+    vector<int> shape;
+    int size;
+public:
+    void createTensor(vector<int>shape);
+    void generate(int size, float* data);
+    void Display(float*data);
+    int getSize()  {
+        return size;
+    }
+    float*getData(){
+       return data;
+    }
+}tensor;
+void Tensor::generate(int size, float* data) {
+    mt19937 generator(0);
+    uniform_real_distribution<float> distribution(0.0, 1.0);
+    for (int i = 0; i < size * 2; ++i) {
+        data[i] = distribution(generator);
+    }
+}
+void Tensor::createTensor(vector<int>shape) {
+    this->shape = shape;
+    size = 1;
+    for (int i = 0; i < shape.size(); i++) {
+        size *= shape[i];
+    }
+    data = new float[size*3];
+    generate(size, data);
+    
+}
+    void Tensor::Display(float*data){
+        int last_dim1 = shape.back();
+        int last_dim2 = shape[shape.size() - 2];
+        int total_size = last_dim1 * last_dim2;
+        for (int x = 0; x < size*2; x += size) {
+            if (shape.size() < 3) {
+                for (int i = x; i < size + x; i++) {
+                    cout << data[i];
+                    if ((i + 1) % shape[1] != 0)
+                        cout << " ";
+                    else
+                        cout << endl;
+                }
+            }
+            else {
+                int count_size = 1;
+                for (size_t i = 0; i < shape.size() - 2; ++i) {
+                    count_size *= shape[i];
+                }
+                for (int i = 0; i < count_size; i++) {
+                    for (int j = 0; j < last_dim1; j++) {
+                        for (int k = 0; k < last_dim2; k++) {
+                            int position = i * total_size + j * last_dim2 + k + x;
+                            cout << data[position];
+                            if ((position + 1) % shape[shape.size() - 1] != 0)
+                                cout << " ";
+                            else
+                                cout << endl;
+                        }
+                    }
+                    if (i < count_size - 1) {
+                        cout << endl;
+                    }
+                }
+            }
+            if (x < size) {
+                cout << endl;
+                cout << "Tensor 2:" << endl;
+            }
+        }
+    }
+
+int main() {
+    Tensor tensor;
+    vector<int> shape; 
+    int dim_value;
+    while (cin >> dim_value) {
+        shape.push_back(dim_value);
+        if (cin.peek() == '\n') {  
+            break;
+        }
+        cin.ignore(); 
+    }
+
+    tensor.createTensor(shape);
+    cout << "Tensor 1:" << endl;
+    tensor.Display(tensor.getData());
+    cout << endl;
+    cout << "Tensor 1 + Tensor 2:" << endl;
+
+    int last_dim1 = shape.back();
+    int last_dim2 = shape[shape.size() - 2];
+    int total_size = last_dim1 * last_dim2;
+
+    for (int i = 0; i < tensor.getSize(); i++) {
+        cout << tensor.getData()[i] + tensor.getData()[i + tensor.getSize()];
+        if ((i + 1) % shape[shape.size() - 1] != 0)
+            cout << " ";
+        else
+            cout << endl;
+        if ((i+1)%total_size==0&&shape.size()>2&&(i+1)< tensor.getSize()) {
+            cout << endl;
+        }
+    }
+    delete[]tensor.getData();
+    return 0;
+}

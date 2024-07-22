@@ -1,0 +1,89 @@
+点和直线的关系
+
+total submissions: 28timespassed: 22timespassing rate: 78.57%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+有线类（Line）和点类（Pointer），请在线类中实现一个 isPointerOfLine方法，该方法传入一个点类对象，判断点和直线的关系，并在该方法中输出。请尝试分别用友元和非友元的方式实现该功能，并体会其中的差异。
+
+点类（Pointer）:
+        成员变量：x轴坐标（int x）  y轴坐标（int y）
+        成员方法：成员变量的公共访问方法
+圆类（Circle）:
+        成员变量：斜率（slope）  偏置/截距（bias）
+
+        成员方法：成员变量的公共访问方法    判断点和直线关系的方法（ isPointerOfLine）
+点和直线的关系：
+        1.点在直线的上方
+        2.点恰好是直线中的一个点
+        3.点在直线的下方
+
+输入描述：
+
+键盘输入4个整数，分别是直线的斜率slope和截距bias，以及点的 x 坐标和 y 坐标
+输出描述：
+
+圆类中实现 isPointerOfLine方法，在该方法中输出点和圆的关系，
+
+如果点在直线的上方，则输出“upper”；
+
+如果点是直线中的一个点，则输出“of”；
+
+如果点在直线的下方，则输出“lower”。
+
+sample inpput and output
+样例1
+input:
+3 4 5 6
+output:
+lower
+样例2
+input:
+3 4 5 19
+output:
+of
+
+
+
+
+#include<iostream>
+#include<cmath>
+using namespace std;
+class Line;
+class Point;
+class Point {
+private:
+	int x;
+	int y;
+	friend class Line;
+public:
+	friend void isPointerOfLine(Line& d, Point& D);
+
+};
+class Line {
+private:
+	int slope;
+	int bias;
+public:
+	friend void isPointerOfLine(Line& d, Point& D);
+};
+void isPointerOfLine(Line& d, Point& D) {
+	cin >> d.slope >> d.bias >> D.x >> D.y;
+	int distance = d.slope*D.x+d.bias-D.y;
+	if (distance == 0) {
+		cout << "of";
+	}
+	else if (distance < 0) {
+		cout << "upper";
+	}
+	else {
+		cout << "lower";
+	}
+}
+int main() {
+	Line d;
+	Point D;
+	isPointerOfLine(d,D);
+	return 0;
+}

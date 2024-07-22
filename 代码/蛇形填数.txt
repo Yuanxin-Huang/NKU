@@ -1,0 +1,50 @@
+#include <stdio.h>//蛇形填数
+int main()
+{
+	int i, j, n, num, m;
+	j = 0;
+	m = 0;
+	i = 0;
+	num = 1;
+	scanf_s("%d", &n);
+	int a[100][100];
+	for (i = 0; i < (n + 1) / 2; i++)//控制循环次数,i和j不单单只作为行标和列标作用，j负责控制改变行数或列数以递加，i负责固定行数或列数
+	{
+		for (j = i; j < n - i; j++)//上横向
+		{
+			a[i][j] = num;
+			num++;
+		}
+		for (j = i + 1; j < n - i; j++)//右竖向
+		{
+			a[j][n - i - 1] = num;
+			num++;
+		}
+		for (j = n - 2 - i; j >= i; j--)//下横向
+		{
+			a[n - i - 1][j] = num;
+			num++;
+		}
+		for (j = n - 2 - i; j > i; j--)//左竖向
+		{
+			a[j][i] = num;
+			num++;
+		}
+	}
+	if (n % 2 != 0)
+	{
+		a[(n / 2)][(n / 2)] = n * n;
+	}
+	int x, y;
+	x, y = 0;
+	for (x = 0; x < n; x++)
+	{
+		for (y = 0; y < n; y++)
+		{
+			printf("%d ", a[x][y]);
+		}
+		printf("\n");
+	}
+
+	return 0;
+}

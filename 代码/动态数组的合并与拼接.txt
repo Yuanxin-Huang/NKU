@@ -1,0 +1,646 @@
+动态数组拼接与合并
+
+total submissions: 125timespassed: 27timespassing rate: 21.60%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+实现一个动态数组类，并实现函数用于拼接和合并（先排序再合并）任何两个动态数组对象，要求重载+和||来实现
+
+请参照以下代码进行补全。
+
+请注意，以下代码的函数原型并不完全正确，你可能需要修改函数原型完成任务。
+
+输入：第一行输入一个整数n，表明需要构建几个动态数组
+
+            接下来n行分别输入多个整数用空格隔开，用于初始化每个动态数组
+
+输出：
+
+            所有输出已经在参照代码中给出。
+
+参照给出的代码如下：
+
+// 实现一个动态数组类，并实现一个函数用于排序并合并任何两个动态数组对象，要求该函数需要重载+并且可以连续调用
+#include <iostream>
+#include <string>
+#include <sstream>
+
+class DynamicArray {
+private:
+    int* arr;
+    int size;
+    float Scaling = 1.5;
+    int capacity = 10;
+    int id;
+    static int array_id;
+
+public:
+    DynamicArray() {
+        capacity = 0;
+        arr = nullptr;
+        id = array_id;
+        array_id++;
+        std::cout << "Construct: " << this->id << std::endl;
+    }
+
+    DynamicArray(int* array, int arraySize) {
+        std::cout << "Construct: " << this->id << std::endl;
+         // Your code Here
+
+    }
+
+    DynamicArray(const DynamicArray& other) {
+        std::cout << "Copy Construct: " << this->id <<" From: "<< other.id << std::endl;
+        // Your code Here
+
+    }
+
+    ~DynamicArray() {
+        std::cout << "Destruct: "  << this->id<< std::endl;
+        delete[] arr;
+    }
+
+    int operator[](int index) const {
+        // Your code Here
+
+    }
+
+    void push_back(int value) {
+        if (size == capacity) {
+            if (capacity == 0) 
+                capacity = 10;
+            else
+                capacity = capacity * Scaling;
+            std::cout << "Increase "<<this->id<<"'s capacity to "<< capacity << std::endl;
+            // Your code Here
+
+
+        }
+        (*this)[size++] = value;
+    }
+
+
+    DynamicArray& operator=(const DynamicArray& other) {
+        std::cout << "Assignment Construct: " << this->id << std::endl;
+        // Your code Here
+        
+        return *this;
+    }
+
+    DynamicArray operator+(const DynamicArray other) {
+        // Your code Here
+        
+    }
+
+    friend DynamicArray operator||(DynamicArray src, DynamicArray dst) {
+        // Sort:  Your code Here
+        
+        // Merge: Your code Here
+        
+    }
+
+    void print() const {
+        for (int i = 0; i < size; i++) {
+            std::cout << (*this)[i];
+            if (i != size - 1) {
+                std::cout << " ";
+            } else {
+                std::cout << std::endl;
+            }
+        }
+    }
+};
+
+int DynamicArray::array_id = 0;
+
+int main() {
+    int n;
+    std::cin>>n;
+    std::cin.ignore();
+    std::string line;
+    int num;
+    // Init DynamicArray
+    DynamicArray* arrays = new DynamicArray[n];
+    for(int i = 0; i < n; i++){
+        std::getline(std::cin, line);
+        std::istringstream stream(line);
+        while (stream >> num) {
+            std::cout << num << std::endl;
+            arrays[i].push_back(num);
+        }
+    }
+    // Test +
+    DynamicArray* array1 = new DynamicArray();
+    for (int i = 0; i < n; i++) {
+        *array1 = *array1 + arrays[i];
+    }
+    array1->print();
+    delete array1;
+
+    // Test ||
+    DynamicArray array2 = arrays[0];
+    for (int i = 1; i < n; i++) {
+        array2 = array2 || arrays[i];
+    }
+    array2.print();
+
+    // Release
+    delete[] arrays;
+
+    return 0;
+}
+
+
+sample inpput and output
+样例1
+input:
+3
+3 2 1
+6 5 4
+9 8 7
+output:
+Construct: 0
+Construct: 1
+Construct: 2
+Increase 0's capacity to 10
+Increase 1's capacity to 10
+Increase 2's capacity to 10
+Construct: 3
+Increase 3's capacity to 10
+Assignment Construct: 3
+Assignment Construct: 3
+Assignment Construct: 3
+3 2 1 6 5 4 9 8 7
+Destruct: 3
+Copy Construct: 4 From: 0
+Assignment Construct: 4
+Assignment Construct: 4
+1 2 3 4 5 6 7 8 9
+Destruct: 2
+Destruct: 1
+Destruct: 0
+Destruct: 4
+样例2
+input:
+3
+10 9 8 7 6 5 4 3 2 1 0
+12 14 16 13
+17 16 15 14 13 12 11
+output:
+Construct: 0
+Construct: 1
+Construct: 2
+Increase 0's capacity to 10
+Increase 0's capacity to 15
+Increase 1's capacity to 10
+Increase 2's capacity to 10
+Construct: 3
+Increase 3's capacity to 10
+Increase 3's capacity to 15
+Assignment Construct: 3
+Assignment Construct: 3
+Increase 3's capacity to 22
+Assignment Construct: 3
+10 9 8 7 6 5 4 3 2 1 0 12 14 16 13 17 16 15 14 13 12 11
+Destruct: 3
+Copy Construct: 4 From: 0
+Increase 1's capacity to 15
+Assignment Construct: 4
+Increase 2's capacity to 15
+Increase 2's capacity to 22
+Assignment Construct: 4
+0 1 2 3 4 5 6 7 8 9 10 11 12 12 13 13 14 14 15 16 16 17
+Destruct: 2
+Destruct: 1
+Destruct: 0
+Destruct: 4
+样例3
+input:
+2
+9 8 7 6 5 4 3 2 1 0
+11 12 13 14 15
+output:
+Construct: 0
+Construct: 1
+Increase 0's capacity to 10
+Increase 1's capacity to 10
+Construct: 2
+Increase 2's capacity to 10
+Assignment Construct: 2
+Increase 2's capacity to 15
+Assignment Construct: 2
+9 8 7 6 5 4 3 2 1 0 11 12 13 14 15
+Destruct: 2
+Copy Construct: 3 From: 0
+Increase 1's capacity to 15
+Assignment Construct: 3
+0 1 2 3 4 5 6 7 8 9 11 12 13 14 15
+Destruct: 1
+Destruct: 0
+Destruct: 3
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <iostream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+class DynamicArray
+{
+private:
+    int* arr;
+    int size;
+    float Scaling = 1.5;
+    int capacity = 10;
+    int id;
+    static int array_id;
+
+public:
+    DynamicArray()
+    {
+        size = 0;
+        capacity = 0;
+        arr = nullptr;
+        id = array_id;
+        array_id++;
+        std::cout << "Construct: " << this->id << std::endl;
+    }
+
+    DynamicArray(int* array, int arraySize)
+    {
+        std::cout << "Construct: " << this->id << std::endl;
+       
+    }
+
+    DynamicArray(const DynamicArray& other)
+    {
+        this->id = array_id++;
+        this->size = other.size;
+        this->capacity = other.capacity;
+        arr = new int[this->capacity];
+        for (int i = 0; i < size; i++)
+        {
+            this->arr[i] = other.arr[i];
+        }
+        std::cout << "Copy Construct: " << this->id << " From: " << other.id << std::endl;
+    }
+
+    ~DynamicArray()
+    {
+        std::cout << "Destruct: " << this->id << std::endl;
+        delete[] arr;
+    }
+
+    int operator[](int index) const
+    {
+        return arr[index];
+    }
+
+    void push_back(int value)
+    {
+        if (size == capacity)
+        {
+            if (capacity == 0)
+            {
+                capacity = 10;
+            }
+            else
+            {
+                capacity = capacity * Scaling;
+            }
+            std::cout << "Increase " << this->id << "'s capacity to " << capacity << std::endl;
+            int* t;
+            t = arr;
+            arr = new int[capacity];
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = t[i];
+            }
+            delete[] t;
+        }
+        (*this).arr[size++] = value;
+    }
+
+
+    DynamicArray& operator=(const DynamicArray& other)
+    {
+        std::cout << "Assignment Construct: " << this->id << std::endl;
+        if (this->arr != other.arr)
+        {
+            this->size = other.size;
+            this->capacity = other.capacity;
+            delete[] this->arr;
+            this->arr = new int[this->capacity];
+            for (int i = 0; i < size; i++)
+            {
+                this->arr[i] = other.arr[i];
+            }
+        }
+
+        return *this;
+    }
+
+    DynamicArray& operator+(const DynamicArray& other)
+    {
+        for (int i = 0; i < other.size; i++)
+        {
+            this->push_back(other[i]);
+        }
+        return *this;
+    }
+
+    friend DynamicArray& operator||(DynamicArray& src, DynamicArray& dst)
+    {
+        for (int i = 0; i < src.size; i++)
+        {
+            dst.push_back(src[i]);
+        }
+        int t, T;
+        for (int i = 0; i < dst.size - 1; i++)
+        {
+            t = i;
+            for (int j = i + 1; j < dst.size; j++)
+            {
+                if (dst[t] > dst[j])t = j;
+            }
+            T = dst[t];
+            dst.arr[t] = dst[i];
+            dst.arr[i] = T;
+        }
+        return dst;
+    }
+
+    void print() const
+    {
+        for (int i = 0; i < size; i++)
+        {
+            std::cout << (*this)[i];
+            if (i != size - 1)
+            {
+                std::cout << " ";
+            }
+            else
+            {
+                std::cout << std::endl;
+            }
+        }
+    }
+};
+
+int DynamicArray::array_id = 0;
+
+int main() {
+    int n;
+    std::cin >> n;
+    std::cin.ignore();
+    std::string line;
+    int num;
+
+    // Init DynamicArray
+    DynamicArray* arrays = new DynamicArray[n];
+    for (int i = 0; i < n; i++)
+    {
+        std::getline(std::cin, line);
+        std::istringstream stream(line);
+        while (stream >> num)
+        {
+            arrays[i].push_back(num);
+        }
+    }
+
+    // Test +
+    DynamicArray* array1 = new DynamicArray();
+    for (int i = 0; i < n; i++)
+    {
+        *array1 = *array1 + arrays[i];
+
+    }
+    array1->print();
+    delete array1;
+
+    // Test ||
+    DynamicArray array2 = arrays[0];
+    for (int i = 1; i < n; i++)
+    {
+        array2 = array2 || arrays[i];
+    }
+    array2.print();
+
+    // Release
+    delete[] arrays;
+
+    return 0;
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <iostream>
+#include <string>
+#include <sstream>
+using namespace std;
+class DynamicArray {
+private:
+    int* arr;
+    int size=0;
+    float Scaling = 1.5;
+    int capacity =0;
+    int id;
+    static int array_id;
+
+public:
+    DynamicArray() {
+        capacity = 0;
+        arr = nullptr;
+        id = array_id;
+        array_id++;
+        std::cout << "Construct: " << this->id << std::endl;
+    }
+
+    DynamicArray(int* array, int arraySize) {
+        id = array_id;
+        array_id++;
+        std::cout << "Construct: " << this->id << std::endl;
+        // Your code Here
+       
+        if (arraySize<=capacity)
+        {
+            arr = new int[capacity];
+            for (int i = 0; i < arraySize; i++)
+            {
+                arr[i] = array[i];
+            }
+            size = arraySize;
+        }
+        else
+        {
+            while (capacity < arraySize)
+            {
+                capacity *= 1.5;
+            }
+            for (int i = 0; i < arraySize; i++)
+            {
+                arr[i] = array[i];
+            }
+            size = arraySize;
+        }
+
+    }DynamicArray(const DynamicArray& other) {
+        id = array_id;
+        array_id++;
+        std::cout << "Copy Construct: " << this->id << " From: " << other.id << std::endl;
+        // Your code Here
+        size = other.size;
+        capacity = other.capacity;
+        arr = new int[capacity];
+        
+        for (int i = 0; i < size; i++)
+        {
+            arr[i] = other.arr[i];
+        }
+    }
+
+    ~DynamicArray() {
+        std::cout << "Destruct: " << this->id << std::endl;
+        delete[] arr;
+    }
+
+    int& operator[](int index) const {
+        // Your code Here
+        return arr[index];
+    }
+
+    void push_back(int value) {
+        //cout << "former capacity" << capacity << endl<<"former size"<<size<<endl;
+        if (size == capacity)
+        {
+            if (capacity == 0)
+                capacity = 10;
+            else
+                capacity = capacity * Scaling;
+            std::cout << "Increase " << this->id << "'s capacity to " << capacity << std::endl;
+            // Your code Here
+            int* copy = new int[capacity];
+            for (int i = 0; i < size; i++)
+            {
+                copy[i] = arr[i];
+            }
+            if (arr != nullptr)
+                delete[]arr;
+            arr = copy;
+
+        }
+        //cout << "now size" << size <<"now capacity"<<capacity << endl;
+        (*this)[size++] = value;
+    }
+        
+        DynamicArray& operator=(const DynamicArray & other) {
+            std::cout << "Assignment Construct: " << this->id << std::endl;
+            // Your code Here
+            if (this != &other) {
+                this->size = other.size;
+                this->capacity = other.capacity;
+                this->arr = new int[capacity];
+                for (int i = 0; i < size; i++)
+                {
+                    this->arr[i] = other.arr[i];
+                }
+            }
+            return *this;
+        }
+
+        DynamicArray& operator+(const DynamicArray& other) {
+            // Your code Here
+            for (int i = 0; i < other.size; i++)
+                this->push_back(other.arr[i]);
+            return *this;
+        }
+
+        friend DynamicArray& operator||(DynamicArray& src, DynamicArray& dst) {
+            // Sort:  Your code Here
+
+            // Merge: Your code Here
+            int newsize = src.size + dst.size;
+            int* copy = new int[newsize];
+            for (int i = 0; i < src.size; i++)
+                copy[i] = src[i];
+            for (int i = src.size; i < newsize; i++)
+            {
+                copy[i] = dst[i - src.size];
+            }
+            dst.arr = new int[newsize];
+            dst.size = 0;
+            //dst.capacity = 0;
+            for (int i = 0; i < newsize; i++)
+                dst.push_back(copy[i]);
+            for (int i = 0; i < dst.size-1; i++)
+            {
+                int min = dst.arr[i];
+                for (int j = i + 1; j < dst.size; j++)
+                {
+                    if (dst.arr[j] < min)
+                    {
+                        dst.arr[i] = dst.arr[j];
+                        dst.arr[j] = min;
+                        min = dst.arr[i];
+                    }
+                }
+            }
+            return dst;
+        }
+
+        void print() const {
+            for (int i = 0; i < size; i++) {
+                std::cout << arr[i];
+                if (i != size - 1) {
+                    std::cout << " ";
+                }
+                else {
+                    std::cout << std::endl;
+                }
+            }
+        }
+    };
+    int DynamicArray::array_id = 0;
+
+    int main() {
+        int n;
+        std::cin >> n;
+        std::cin.ignore();
+        std::string line;
+        int num;
+        // Init DynamicArray
+        DynamicArray* arrays = new DynamicArray[n];
+        for (int i = 0; i < n; i++) {
+            std::getline(std::cin, line);
+            std::istringstream stream(line);
+            while (stream >> num) {
+                //std::cout << num << std::endl;
+                arrays[i].push_back(num);
+            }
+            //
+            //cout << endl<<"Test ";
+            //arrays[i].print();
+        }
+        // Test +
+        DynamicArray* array1 = new DynamicArray();
+        for (int i = 0; i < n; i++) {
+            *array1 = *array1 + arrays[i];
+        }
+        array1->print();
+        delete array1;
+        // Test ||
+        DynamicArray array2 = arrays[0];
+        for (int i = 1; i < n; i++) {
+            array2 = array2 || arrays[i];
+           // cout<<endl << "test" << endl;
+        }
+        array2.print();
+
+        // Release
+        delete[] arrays;
+
+        return 0;
+    }

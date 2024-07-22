@@ -1,0 +1,159 @@
+算矩阵的行列式
+
+total submissions: 76timespassed: 12timespassing rate: 15.79%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+矩阵的行列式是一个可以从方阵中计算得出的特殊数值，其在数学和科学中有许多重要的应用，比如，如果一个矩阵的行列式不为零，那么这个矩阵是可逆的，可以用来解线性方程组。
+
+计算矩阵行列式的递归算法通常遵循以下步骤：
+
+    基本情况：如果矩阵是1x1的，那么行列式就是矩阵中的那个元素。如果矩阵是2x2的，那么行列式就是对角线元素的乘积减去另外两个元素的乘积。
+
+    递归步骤：如果矩阵的大小大于2，那么行列式可以通过以下方式计算：
+        对于矩阵的每一列（或每一行），计算该元素的余子式（cofactor）。余子式是通过删除当前元素所在的行和列后得到的矩阵的行列式。
+        将每个元素与其余子式的乘积加起来，得到的和就是原矩阵的行列式。注意，根据元素的位置，可能需要给余子式加上负号。
+
+算法的伪代码如下：
+
+function calculateDeterminant(matrix):
+    if matrix is 1x1:
+        return the single element in matrix
+    if matrix is 2x2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    else:
+        determinant = 0
+        for each element in the first row of matrix:
+            cofactor = calculateDeterminant(submatrix obtained by removing the row and column of the element)
+            if the column of the element is odd:
+                cofactor = -cofactor
+            determinant += element * cofactor
+        return determinant
+
+其中的余子式（Cofactor）是在矩阵中删除特定行和列后得到的子矩阵的行列式。
+
+比如，对于一个7x7的矩阵，如果我们在(5,5)处计算余子式，我们会删除第5行和第5列，这将会得到一个6x6的子矩阵。所以，(5,5)处的余子式是一个6x6矩阵的行列式。
+
+该算法的时间复杂度是O(n!)，其中n是矩阵的大小，因为对于每个元素，我们都需要计算一个较小的矩阵的行列式。
+
+请构建Matrix类型，并实现其构造函数、余子式获取函数、行列式计算函数。输入为Matrix的行和列，设随机种子为0，生成随机矩阵。输出矩阵，然后输出矩阵的行列式。
+
+如果输入矩阵不是方阵，则返回error.
+
+输入：矩阵的行和列
+
+输出：矩阵元素以及矩阵行列式
+
+sample inpput and output
+样例1
+input:
+3 3
+output:
+0.548814 0.592845 0.715189
+0.844266 0.602763 0.857946
+0.544883 0.847252 0.423655
+0.0829981
+
+
+#include <iostream>  
+#include<random>
+using namespace std;
+
+class Matrix {
+private:
+    float** data;
+    int rows;
+    int cols;
+public:
+    //构造函数
+    Matrix(int r, int c) {
+        rows = r;
+        cols = c;
+    }
+    float** getData() {
+        return data;
+    }
+    //随机数生成matrix
+    void createMatrix() {
+        mt19937 generator(0);//随机种子为0
+        uniform_real_distribution<float> distribution(0, 1.0);
+        data = new float* [rows];//data用new int 分配内存
+        for (int i = 0; i < rows; i++) {
+            data[i] = new float[cols];
+            for (int j = 0; j < cols; j++) {
+                data[i][j] = distribution(generator);
+            }
+        }
+    }
+    //计算行列式
+    float calculateDeterminant(float** data, int n) {
+        float determinant = 0.0;
+        if (n == 1) {
+            return data[0][0];
+        }
+        else if (n == 2) {
+            return data[0][0] * data[1][1] - data[0][1] * data[1][0];
+        }
+        else {
+            for (int k = 0; k < n; k++) {//按照第一行展开
+                float** data2;
+                data2 = new float* [n - 1];
+                for (int i = 0; i < n - 1; i++) {
+                    data2[i] = new float[n - 1];
+                }//给代数余子式分配内存
+                for (int i = 0; i < n - 1; i++) {
+                    for (int j = 0; j < n - 1; j++) {
+                        int m = j < k ? j : j + 1;//跳过第k列
+                        data2[i][j] = data[i + 1][m];
+                    }
+                }//余子式赋值
+
+                   //计算余子式的值，递归引用函数
+                if (data[0][k] != 0) {
+                    determinant += data[0][k] * calculateDeterminant(data2, n - 1) * (((2 + k) % 2) ? -1 : 1);
+                }
+                else
+                    determinant = 0;
+                //释放内存
+                for (int i = 0; i < n - 1; i++) {
+                    delete[]data2[i];
+                }
+                delete[]data2;
+            }
+        }
+        return determinant;
+    }
+
+    void Display() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                cout << data[i][j];
+                if (j != cols - 1)
+                    cout << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    int rows, cols;
+    cin >> rows >> cols;
+    Matrix matrix(rows, cols);
+    if (rows != cols&& rows != 0 && cols != 0) {
+        matrix.createMatrix();
+        matrix.Display();
+        cout << "error";
+        return 0;
+    }
+    else if (rows == 0 || cols == 0){
+        cout << 0;
+    }
+    else {
+        matrix.createMatrix();
+        matrix.Display();
+        cout << matrix.calculateDeterminant(matrix.getData(), rows);
+        return 0;
+    }
+}

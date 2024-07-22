@@ -1,0 +1,115 @@
+字符串左右旋转
+字符串
+
+total submissions: 39timespassed: 17timespassing rate: 43.59%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+定义字符串的旋转操作为：
+
+左旋转 L :把字符串前面的若干个字符移动到字符串的尾部，如把字符串abcdef左旋转2位得到字符串cdefab。
+
+右旋转 R :把字符串后面的若干个字符移动到字符串的头部，如把字符串abcdef右旋转2位得到字符串efabcd。
+输入格式：
+
+第一行一个整数N(1<=N<=20)表示有N组测试数据。
+
+接下来的N行，每行有一个字符串S(长度1<S<=15); 操作M; 旋转的位数n(0<=n<=20)。当操作M为L时，代表将字符串左旋转n 位，M为R时，代表将字符串右旋转n位。
+输出格式：
+
+相应操作之后的字符串，按照顺序输出字符。
+提示：
+
+字符串由大小写字母组成，无空格及标点符号。 如果移动的位数大于字符的长度，移动一圈后还要继续移动。
+
+sample inpput and output
+样例1
+input:
+2
+abcdef L 2
+abcdef R 2
+output:
+cdefab
+efabcd 
+
+
+
+
+#include <stdio.h>
+#include <string.h>
+void t1(char* a,char b,int c) {
+	int temp = strlen(a);
+	c = c % strlen(a);
+	if (b == 'L') {
+		for (int i = c; i <temp ; i++) {
+			printf("%c", a[i]);
+		}
+		for (int i = 0; i <c; i++) {
+			printf("%c", a[i]);
+		}
+		printf("\n");
+	}
+	else if (b == 'R') {
+		for (int i = (temp - c); i < temp; i++) {
+			printf("%c", a[i]);
+		}
+		for (int i = 0; i < (temp - c); i++) {
+			printf("%c", a[i]);
+		}
+		printf("\n");
+	}
+}
+
+int main() {
+	int n=0;
+	scanf("%d",&n);
+	for (int i = 0; i < n; i++) {
+		char s[15];
+		char k; int l;
+		scanf("%s %c %d", &s,&k,&l);
+		t1(s, k, l);
+	}
+	return 0;
+}
+
+
+
+
+//#define   _CRT_SECURE_NO_WARNINGS 1
+//#include <stdio.h>
+//#include<string.h>
+//int main() {
+//	int N, i, n, len;
+//	char* p1,*p2,*p3,*temp;
+//	temp = NULL;
+//	char S[20], M;
+//	scanf("%d\n",&N);
+//	for (i = 0; i < N; i++) {
+//		scanf("%s %c %d",S,&M,&n);
+//		len = strlen(S);
+//			p2 = NULL;
+//			p1 = S;
+//
+//			len = strlen(S);
+//			if (n > len) {
+//				n = n - len;
+//			}
+//			if (M == 'L') {//左旋转
+//				temp = p1;
+//				p1 = (p1 + n);//p1指向被旋转的字符串首字母
+//				p2 = temp;
+//				temp = temp+n;//p2指向原首字母，右旋转同理
+//				temp = NULL;
+//			}
+//			if (M == 'R') {
+//				temp = p1;
+//				p1 = (p1 + len - 1 + n);
+//				p2 = temp;
+//				temp = temp - len + n;
+//				temp = NULL;
+//			}
+//				printf("%s%s\n", p1, p2);
+//	}
+//	return 0;
+//}

@@ -1,0 +1,161 @@
+密文破解
+
+total submissions: 263timespassed: 44timespassing rate: 16.73%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+在情报传递过程中，往往需要对情报用一定的方式进行加密。现在给出一种最简单的加密方法：
+
+1. 对给定的一个字符串，把其中从a~y,A~Y的字母用其后继字母替代，如abc加密后变为bcd；
+
+2. 把z和Z用a和A替代，如Zoo加密后变为App；
+
+3. 其他非字母字符不变。
+
+请根据上述加密规则将输入的字符串进行解密。
+
+对于上述问题，小明同学在网站上搜索到了一段相关代码，如下：
+
+int main()
+{
+	char a[30];//定义字符数组用来存放输入的待解密字符串
+	scanf_s("%s", a);//读取输入数据
+
+	int length = 0; //获取输入字符串的实际长度
+	for (int i = 0; i < 20; i++)
+	{
+		if (a[i] == NULL) {
+			length = i;
+			break;
+		}
+	}
+	for (int i = 0; i < length; i++) {
+
+		if (a[i] >= 'A' && a[i] <= 'Z') {//如果这个字母是大写字母
+			if (a[i] == 'A') {//并且它是A
+				a[i] = 'Z';//那么替代成Z
+			}
+			else {
+				a[i]--;//用前面的字母替代
+			}
+		}
+		else if (a[i] >= 'a' && a[i] <= 'z') {//如果这个字母是小写字母
+			if (a[i] == 'a') {//如果它是a
+				a[i] = 'z';//替代成z
+			}
+			else {
+				a[i]--; //否则用前面的字母替代
+			}
+		}
+	}
+	printf("%s",a);//直接输出解密后的字符串
+	return 0;
+}
+
+如果加密步骤变为下列顺序，请你在上述代码的基础上进行修改和完善，使得解密方法能适用新规则：
+
+1. 如果输入的字符串以 er 、 ly 或者 ing 作为后缀结尾，首先进行变换：‘er’变为#，‘ly’变为‘&’，‘ing’变为‘*’（原本需要被加密的信息中不含有“#、&、*”这三个字符，且长度不小于4）。
+
+2. 剩余的字符如果是小写字母，转为大写；如果是大写字母，转为小写；
+
+3. 大小写转变后，其中从a~y,A~Y的字母用其后继字母替代；
+
+4. 把z和Z用a和A替代；
+
+5. 在执行了上述加密规则后，加密后的字符串中如果含有大写字母‘A’，则将‘A’都写作‘@’，如：‘zoo’加密后变为‘@PP’。（原本需要被加密的信息中不含有‘@’）
+
+6. 1~9的数字分别减一作为加密后替代的字符，0加密后变为9。
+
+7. 其余非数字或字母的字符保持不变。
+
+注意：本题需要进行解密操作，而不是加密，上述代码可能存在问题。
+输入格式
+
+输入一行需要进行解密的字符串，该字符串不含空格，不含大写字母‘A’，最大长度为30。
+输出格式
+
+输出解密后的字符串。
+
+sample inpput and output
+样例2
+input:
+xFMDPN*
+output:
+Welcoming
+样例1
+input:
+@PP9
+output:
+zoo0
+
+
+
+#include<stdio.h>
+#include<ctype.h>
+int main()
+{
+	char a[50];//定义字符数组用来存放输入的待解密字符串
+	scanf("%s", a);//读取输入数据
+
+	int length = 0; //获取输入字符串的实际长度
+	for (int i = 0; i < 50; i++)
+	{
+		if (a[i] == NULL) {
+			length = i;
+			break;
+		}
+	}
+	for (int i = 0; i < length; i++) {
+
+		
+		if (a[i] <= '9' && a[i] >= '0')
+		{
+			if (a[i] == '9') a[i] = '0';
+			else a[i]++;
+		}
+		if (a[i] == '@') a[i] = 'A';
+		if (a[i] >= 'A' && a[i] <= 'Z') 
+		{//如果这个字母是大写字母
+			if (a[i] == 'A') {//并且它是A
+				a[i] = 'Z';//那么替代成Z
+			}
+			else {
+				a[i]--;//用前面的字母替代
+			}
+			a[i]=tolower(a[i]);
+		}
+		else if (a[i] >= 'a' && a[i] <= 'z') 
+		{//如果这个字母是小写字母
+			if (a[i] == 'a') {//如果它是a
+				a[i] = 'z';//替代成z
+			}
+			else {
+				a[i]--; //否则用前面的字母替代
+			}
+			a[i]=toupper(a[i]);
+			
+		}
+	}
+	if (a[length - 1] == '#')
+	{
+		a[length - 1] = 'e';
+		a[length] = 'r';
+		a[length +1] = '\0';
+	}
+	else if(a[length - 1]=='&')
+	{
+		a[length - 1] = 'l';
+		a[length] = 'y';
+		a[length + 1] = '\0';
+	}
+	else if (a[length - 1] == '*')
+	{
+		a[length - 1] = 'i';
+		a[length] = 'n';
+		a[length + 1] = 'g';
+		a[length + 2] = '\0';
+	}
+	printf("%s", a);//直接输出解密后的字符串
+	return 0;
+}

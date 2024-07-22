@@ -1,0 +1,61 @@
+学生类
+question description
+
+要求定义一个学生类，其中数据成员：学号、姓名、数学、英语、计算机三科成绩；成员函数：求总成绩、求三科平均成绩
+
+输入： 学号、姓名、数学、英语、计算机三科成绩
+输出： 学号、姓名、数学、英语、计算机三科成绩 总成绩 三科平均成绩 
+
+要求：学号和分数均为整数，平均成绩按四舍五入取整，输入/输出的各项之间使用空格隔开。
+
+sample inpput and output
+样例1
+input:
+1 Lucy 92 98 95
+output:
+1 Lucy 92 98 95 285 95
+
+#include <iostream>
+using namespace std;
+#include <string>
+
+class Student {
+private:
+	int m_Id;
+	double ScoreMaths, ScoreEnglish, ScoreComputer;
+	string m_name;
+public:
+	int average() {
+		double av; 
+		int averageAfter;
+		av = (ScoreMaths + ScoreEnglish + ScoreComputer) / 3;
+		averageAfter = av;
+		if ((av + 0.5)>=(averageAfter + 1))
+			return averageAfter + 1;
+		else
+			return averageAfter;
+	}
+	int total() {
+		return (ScoreMaths + ScoreEnglish + ScoreComputer);
+	}
+	void input() {
+		cin >> m_Id >> m_name
+			>> ScoreMaths  >> ScoreEnglish  >> ScoreComputer;
+	}
+	void Display() {
+		cout << m_Id << " " << m_name << " "
+			<< ScoreMaths << " "
+			<< ScoreEnglish << " "
+			<< ScoreComputer << " "
+			<< total()<<" "
+			<< average() << endl;
+	}
+};
+int main() {
+
+	Student stu;
+	stu.input();
+	stu.Display();
+
+	return 0;
+}

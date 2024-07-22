@@ -1,0 +1,259 @@
+实现矩阵乘法
+
+total submissions: 83timespassed: 22timespassing rate: 26.51%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+矩阵乘法是最常见的科学计算算子，实现高效的矩阵乘法具有重要意义。
+
+请实现通用矩阵乘法函数gemm，其可以计算char，int, float和double等不同类型的矩阵乘法计算。
+
+
+输入：第一行为三个整数m,n,p和一个符号(c,i,f,d)分别表示4种不同类型，m,n,p分别表示矩阵A的形状[m,n]和B的形状[n,p]
+
+接下来分别输入m行，每行n个数，表示矩阵A的值
+
+输入n行，p个数表示矩阵b的值。
+
+
+输出：输出m行p列的矩阵计算结果。
+
+
+注意对不同类型的计算使用重载函数实现。
+
+sample inpput and output
+样例1
+input:
+3 4 5 i
+2 2 3 4
+3 4 2 4
+2 3 3 1
+2 1 4 0 4
+1 1 2 3 4
+2 2 2 1 4
+4 0 1 0 3
+output:
+28 10 22 9 40
+30 11 28 14 48
+17 11 21 12 35
+样例2
+input:
+3 3 3 c
+2 2 3
+4 3 4
+2 4 2
+3 3 1
+2 1 4
+0 4 1
+output:
+10 20 13
+18 31 20
+14 18 20
+
+
+
+#include <iostream>
+using namespace std;
+// 矩阵乘法函数重载 - char 类型
+void gemm(const int m, const int n, const int p, char**A, char**B, int**C) {
+    C = new int* [m];
+    for (int i = 0; i < m; i++) {
+        C[i] = new int[p];
+        for (int j = 0; j < p; j++) {
+            C[i][j] = 0;
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j]; 
+            }
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            cout << C[i][j];
+            if (j != p - 1)
+                cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+// 矩阵乘法函数重载 - int 类型
+void gemm(const int m, const int n, const int p, int** A, int** B, int** C) {
+
+    C = new int* [m];
+    for (int i = 0; i < m; i++) {
+        C[i] = new int[p];
+        for (int j = 0; j < p; j++) {
+            C[i][j] = 0;
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            for (int k = 0; k < n;k++) {
+                C[i][j] += A[i][k] * B[k][j]; 
+            }
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            cout << C[i][j];
+            if (j != p - 1)
+                cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+// 矩阵乘法函数重载 - float 类型
+void gemm(const int m, const int n, const int p, float** A, float** B, float** C) {
+    C = new float* [m];
+    for (int i = 0; i < m; i++) {
+        C[i] = new float[p];
+        for (int j = 0; j < p; j++) {
+            C[i][j] = 0;
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            cout << C[i][j];
+            if (j != p - 1)
+                cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+// 矩阵乘法函数重载 - double 类型
+void gemm(const int m, const int n, const int p, double** A, double** B, double** C) {
+    C = new double* [m];
+    for (int i = 0; i < m; i++) {
+        C[i] = new double[p];
+        for (int j = 0; j < p; j++) {
+            C[i][j] = 0;
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j]; 
+            }
+        }
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            cout << C[i][j] ;
+            if (j != p - 1)
+                cout << " ";
+        }
+        cout << endl;
+    }
+}
+int main() {
+    int m, n, p;
+    char type;
+    cin >> m >> n >> p >> type;
+    cin.ignore();
+    //char
+    int** A_char = 0, ** B_char = 0,** C_char = 0;
+    if (type == 'c') {
+     A_char = new int*[m];
+        for (int i = 0; i < m; i++) {
+            A_char[i] = new int[n];
+            for (int j = 0; j < n; j++) {
+                cin >> A_char[i][j];
+            }
+        }
+        cin.ignore();
+        B_char = new int*[n];
+        for (int i = 0; i < n; i++) {
+             B_char[i] = new int[p];
+            for (int j = 0; j < p; j++) {
+                cin >> B_char[i][j];
+            }
+        }
+        gemm(m, n, p, A_char, B_char, C_char);
+       
+    }
+    //int
+    else if (type == 'i') {
+ 
+        int ** A_int=0, ** B_int=0, ** C_int=0;
+       
+        A_int = new int* [m];
+        for (int i = 0; i < m; i++) {
+            A_int[i] = new int[n];
+            for (int j = 0; j < n; j++) {
+                
+                cin >> A_int[i][j];
+            }
+        }
+        B_int = new int* [n];
+        for (int i = 0; i < n; i++) {
+            B_int[i] = new int[p];
+            for (int j = 0; j < p; j++) {
+                
+                cin >> B_int[i][j];
+            }
+        }
+        gemm(m, n, p, A_int, B_int, C_int);
+     
+    }
+    //float
+    else if (type == 'f') {
+
+        float **A_float=0, **B_float=0, **C_float=0;
+        A_float = new float* [m];
+        for (int i = 0; i < m; i++) {
+            A_float[i] = new float[n];
+            for (int j = 0; j < n; j++) {
+                
+                cin >> A_float[i][j];
+            }
+        }
+        B_float = new float* [n];
+        for (int i = 0; i < n; i++) {
+            B_float[i] = new float[p];
+            for (int j = 0; j < p; j++) {
+              
+                cin >> B_float[i][j];
+            }
+        }
+        gemm(m, n, p, A_float, B_float, C_float);
+        
+    }
+    //double
+    else if (type == 'd') {
+
+        double **A_double=0, **B_double=0, **C_double=0;
+            A_double = new double* [m];
+        for (int i = 0; i < m; i++) {
+            A_double[i] = new double[n];
+            for (int j = 0; j < n; j++) {
+                
+                cin >> A_double[i][j];
+            }
+        }
+            B_double = new double* [n];
+        for (int i = 0; i < n; i++) {
+           B_double[i] = new double[p];
+            for (int j = 0; j < p; j++) {
+                
+                cin >> B_double[i][j];
+            }
+        }
+        gemm(m, n, p, A_double, B_double, C_double);
+        
+    }
+    return 0;
+}

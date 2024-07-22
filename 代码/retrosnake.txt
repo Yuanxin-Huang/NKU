@@ -1,0 +1,103 @@
+#include <graphics.h>
+#include <conio.h>
+
+/*定义宏:f方块宽度、基准坐标x、y，窗口宽度、高度等*/
+
+#define  block_width 22
+#define  x_origin 30
+#define  y_origin 60
+#define windowWidth 1020
+#define windowHeight 700
+
+/*蛇身体的初始化坐标*/
+int snake[12][2] =
+{
+	{14, 11},
+	{13, 11},
+	{13, 10},
+	{12, 10},
+	{11, 10},
+	{11, 9},
+	{11, 8},
+	{11, 7},
+	{10, 7},
+	{9, 7},
+	{8, 7},
+	{7, 7}
+};
+
+/*画出蛇身体的单元格*/
+void drawUnitBlock(int x,int y)
+{
+	int left, top, right, bottom;
+	left = x_origin + block_width * snake[x][0];
+	top= y_origin + block_width * snake[x][1];
+	right = left + block_width;
+	bottom = top + block_width;
+
+	fillrectangle(left,top,right,bottom);
+	//circle(left+block_width/2, top + block_width / 2,10);
+
+	IMAGE img;
+	loadimage(&img, "star.jpg", 20, 20);
+	putimage(left, top, &img);
+
+}
+int block[3000][2];
+void drawEveryBlock(int x,int y) {
+	int left, top, right, bottom;
+	left = x_origin + block_width * block[x][0];
+	top = y_origin + block_width * block[x][1];
+	right = left + block_width;
+	bottom = top + block_width;
+
+	rectangle(left, top, right, bottom);
+}
+/*画出完整的蛇*/
+void drawSnake()
+{
+	int i = 0, j = 0;
+	for (i = 0; i < 12;i++)
+	{
+		for (j = 0; j < 2; j++) 
+		{
+			drawUnitBlock(i,j);
+		}
+	}
+}
+void drawblock() 
+{
+	for (int i = 0; i < 60; i++)
+	{
+		for (int j = 0; j < 40; j++)
+		{
+			block[i][0] = j+1;
+			block[0][j] = i+1;
+			drawEveryBlock(i, j);
+		}
+	}
+}
+
+int main()
+{
+	initgraph(windowWidth,windowHeight);
+
+	cleardevice();
+
+	IMAGE back;
+	loadimage(&back, "background.jpg", 1020, 700);
+	putimage(0, 0, &back);
+
+	setlinestyle(PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND, 3);
+	setlinecolor(WHITE);
+	drawSnake();
+
+
+	setlinestyle(PS_DASH | PS_ENDCAP_ROUND, 1);
+	setlinecolor(WHITE);
+	drawblock();
+
+	_getch();
+	closegraph();
+	return 0;
+}

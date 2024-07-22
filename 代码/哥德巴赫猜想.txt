@@ -1,0 +1,35 @@
+#include<stdio.h>
+#include<math.h>
+	int a, b;
+	int main() {
+		int n;
+		void gobala(int n);
+		scanf_s("%d", &n);
+		gobala(n);
+		if (n < 6 || n % 2 != 0) printf("-1");
+		else printf("%d\n%d", a, b);
+		return 0;
+	}
+	int prime(int n) {//判断素数
+		int k, flag;
+		k = sqrt(n);
+		int i = 2;
+		for (i = 2; i <=k; i++) {
+			if (n % i == 0) break;
+		}
+		if (i > k) flag = 1;//标记，若为素数则flag为1
+		else flag = 0;
+		return (flag);
+	}
+	void gobala(int n) {
+		int j = 2;
+		int x, y;
+		for (j = 2; j <= (n / 2); j++) {
+			x = prime(j);//判断素数
+			y = prime(n - j);
+			if (x == 1 && y == 1) {//利用prime函数判断后的结果决定是否要进行下一步程序
+				a = j;
+				b = n - j;
+			}
+		}
+	}

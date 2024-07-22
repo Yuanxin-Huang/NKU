@@ -1,0 +1,91 @@
+
+
+
+
+
+
+#include<stdio.h>
+#include<string.h>
+int main() {
+	char a[100][1000];
+	int N, i;
+	int zheng(char a[1000]);
+	scanf("%d\n", &N);
+	for (int i = 0; i < N; i++) {
+		gets_s(a[i]);
+	}//输入每组字符串，组数为N
+	int a1[100][1000];//提取整数后的数组
+	int count[100] = { 0 };//记录每组整数个数
+	for (int i = 0; i < N; i++) {
+		int j = 0;
+ 		while (a[i][j] != '\0') {
+			if (a[i][j] == '5' || a[i][j] >= 'a' && a[i][j] <= 'z'
+				|| a[i][j] >= 'A' && a[i][j] <= 'Z') {
+				a[i][j] = ' ';//字母和‘5’变成空格
+			}
+			j++;
+		}
+		int n = 0, begin, end = 0,t=0;//以50a10a51为例
+		for (n = 0; n<strlen(a[i]); n++) {
+			begin = n;
+			int flag = 0;
+			while (a[i][n] != ' ') {//以例子中‘1’出现开始
+				end = n;//标记数字所在位置
+				flag = 1;//标记表示有数字出现
+				n++;//下次循环跳过部分数字，即再遍历时跳过‘1’和‘0’
+				if (n >= strlen(a[i]))
+					break;//控制循环，不然跳不出去
+			}
+			if (flag == 1) {
+				n--;//使得for循环从数字下一位开始，执行for循环语句会使得n加一，会跳过后面的a
+				if (end == begin) {//特殊情况，数为单个，直接储存
+					a1[i][t] = a[i][begin]-'0';
+					t++;
+					count[i]++;//记录整数个数
+				}
+				else {
+					int x = 0;//初始化x，避免连加
+					for (int k = 0; k < end - begin + 1; k++) {
+						x = x * 10 + (a[i][begin+k]-'0');
+					}
+					a1[i][t] = x;
+					t++;
+					count[i]++;
+				}
+			}
+		}
+	}
+	int temp;
+	for (int k = 0; k < N; k++) {
+		for (int i = 0; i < count[k]-1; i++) {
+			for (int j = 0; j < count[k]-1; j++) {
+				if (a1[k][j] > a1[k][j + 1]) {
+					temp = a1[k][j];
+					a1[k][j] = a1[k][j+1];
+					a1[k][j+1] = temp;
+				}
+			}
+		}
+	}//排序
+	int a2[100][1000],jud;
+	for (int k = 0; k < N; k++) {
+		for (int i = 0; i < count[k] - 1; i++) {
+			for (int j = i+1; j < count[k]; j++) {
+				if (a1[k][i] == a1[k][j]) {
+					a1[k][i] = -1;
+				}
+				else {
+					continue;
+				}
+			}
+		}//去重，重复就记为-1，输出遇到跳过即可
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j<count[i]; j++) {
+			if(a1[i][j]!=-1)
+				printf("%d ",a1[i][j]);
+		}
+		printf("\n");
+	}
+	return 0;
+}

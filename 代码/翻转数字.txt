@@ -1,0 +1,43 @@
+翻转数字
+输入一个由大小写字母及数字组成的字符串。将字符串中连续的数字翻转。输出该字符串。
+输入格式
+
+由大写字母、小写字母及数字组成的字符串，长度不超过50。
+输出格式
+
+按规则输出变换后的字符串。
+提示
+
+输出结尾不要输出多余的空格防止格式错误。
+
+sample inpput and output
+样例1
+input:
+hello90world789
+output:
+hello09world987
+
+#define   _CRT_SECURE_NO_WARNINGS 1//翻转数字
+#include<stdio.h>
+#include<string.h>
+int main() {
+	char arr[100];
+	int i = 0,j=0,k=0,n=0;
+	gets_s(arr);
+	int len = strlen(arr);
+	while (i<len) {
+			while (arr[i] >= '0' && arr[i] <= '9') {
+				k = i; n++;
+				i++;
+			}
+			for (; n > 0; n--, k--) {
+				printf("%c", arr[k]);
+			}
+			if (i >= len)
+				break;
+			printf("%c", arr[i]);
+			i++;
+	}
+		
+		return 0;
+}

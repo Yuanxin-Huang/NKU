@@ -1,0 +1,74 @@
+奇偶数
+
+total submissions: 61timespassed: 20timespassing rate: 32.79%
+
+memory limit: 20971520(BYTE)time limit: 2000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+有一整型偶数N（2≤N≤10000），先把1到N中的所有奇数从小到大输出，再把所有的偶数从小到大输出。
+输入格式
+
+第一行有一个整数M（1≤M≤30）表示有M组测试数据；
+
+每组有一个整型偶数N。
+输出格式
+
+第一行输出所有的奇数；
+
+第二行输出所有的偶数。
+提示
+
+同一组数据内的输出请用空格分隔，行尾无空格，多组数据之间的输出请空出一行。
+
+sample inpput and output
+样例1
+input:
+2
+8
+16
+output:
+1 3 5 7
+2 4 6 8
+
+1 3 5 7 9 11 13 15
+2 4 6 8 10 12 14 16
+
+
+
+
+
+
+
+int main()
+{
+	int a, b[100],m=0;
+	scanf("%d\n", &a);
+	for (int m = 0; m < a; m++)
+	{
+		scanf("%d", &b[m]);
+	}
+	for (int i = 0; i < a; i++)
+	{
+		for (int j = 1; j <= b[i]-2; j++)
+		{
+			if ((j % 2 != 0)&&(j!=0))
+			{
+				printf("%d ", j);
+			}
+		}
+		printf("%d\n", b[i]-1);
+		for (int j = 2; j <= b[i] - 2; j++)
+		{
+			if ((j % 2 == 0)&&(j!=0))
+			{
+				printf("%d ", j);
+			}
+		}
+		printf("%d", b[i]);
+		if (i != a - 1)
+		{
+			printf("\n\n");
+		}
+	}
+	return 0;
+}

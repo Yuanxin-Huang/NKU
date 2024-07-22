@@ -1,0 +1,381 @@
+#include <graphics.h>
+#include<iostream>
+#include <conio.h>
+#include<windows.h>
+#pragma comment(lib,"Winmm.lib")
+using namespace std;
+
+#define num_X    20
+#define num_Y    30
+#define BLOCK_WIDTH 25
+#define X_origin 20
+#define Y_origin 20
+#define windowWidth 900
+#define windowHeight 800
+
+int blocks[7][4][4][2] = {
+    //"T"型方块,BLUE,T
+    {{{0, 0}, {-1, 0}, {0, -1}, {1, 0}},
+     {{0, 0}, {0, -1}, {1, 0}, {0, 1}},
+     {{0, 0}, {1, 0}, {0, 1}, {-1, 0}},
+     {{0, 0}, {0, 1}, {-1, 0}, {0, -1}}},
+     //反"Z"型方块,GREEN,Q
+     {{{0, 0}, {-1, 0}, {0, -1}, {1, -1}},
+      {{0, 0}, {0, -1}, {1, 0}, {1, 1}},
+      {{0, 0}, {1, 0}, {0, 1}, {-1, 1}},
+      {{0, 0}, {0, 1}, {-1, 0}, {-1, -1}}},
+      //"Z"型方块,CYAN,Z
+      {{{0, 0}, {-1, -1}, {0, -1}, {1, 0}},
+       {{0, 0}, {1, -1}, {1, 0}, {0, 1}},
+       {{0, 0}, {1, 1}, {0, 1}, {-1, 0}},
+       {{0, 0}, {-1, 1}, {-1, 0}, {0, -1}}},
+       //"一"字型方块,RED,I
+       {{{0, 0}, {-2, 0}, {-1, 0}, {1, 0}},
+        {{0, 0}, {0, -2}, {0, -1}, {0, 1}},
+        {{0, 0}, {2, 0}, {1, 0}, {-1, 0}},
+        {{0, 0}, {0, 2}, {0, 1}, {0, -1}}},
+        //"田"字型方块,MAGENTA,M
+        {{{0, 0}, {-1, 0}, {-1, -1}, {0, -1}},
+         {{0, 0}, {0, -1}, {1, -1}, {1, 0}},
+         {{0, 0}, {1, 0}, {1, 1}, {0, 1}},
+         {{0, 0}, {0, 1}, {-1, 1}, {-1, 0}}},
+         //"L"型方块,BROWN,L
+         {{{0, 0}, {-1, 0}, {1, 0}, {1, -1}},
+          {{0, 0}, {0, -1}, {0, 1}, {1, 1}},
+          {{0, 0},{1, 0}, {-1, 0}, {-1, 1}},
+          {{0, 0}, {0, 1}, {0, -1}, {-1, -1}}},
+          //反"L"型方块,YELLOW,J
+          {{{0, 0}, {-1, 0}, {1, 0}, {1, 1}},
+           {{0, 0}, {0, -1}, {0, 1}, {-1, 1}},
+           {{0, 0}, {1, 0}, {-1, 0}, {-1, -1}},
+           {{0, 0}, {0, 1}, {0, -1}, {1, -1}}}
+};
+
+//Set block color.
+int color[7] = { BLUE ,GREEN ,CYAN ,RED ,MAGENTA ,BROWN ,YELLOW };
+int block_color[7] = { 1,2,3,4,5,6,7 };
+int current_x, current_y;
+int type_all;
+int rotate_all;
+int LandedBlock[num_X][num_Y] = {-1};
+int LandFlag=0;
+int BLOCK_COUNT = 0;
+
+// 画出单元格.
+void drawUnitBlock(int x, int y, int color)
+{
+    int left, top, right, bottom;
+    left = X_origin + x * BLOCK_WIDTH;
+    top = Y_origin + y * BLOCK_WIDTH;
+    right = left + BLOCK_WIDTH;
+    bottom = top + BLOCK_WIDTH;
+    setfillcolor(color);
+    setlinecolor(WHITE);
+    fillrectangle(left, top, right, bottom);
+}
+
+
+
+//画出新的位置的俄罗斯方块
+void drawTetrisBlock(int x, int y, int iType, int iRotate, int color)
+{
+    int new_X, new_Y;
+    for (int i = 0; i < 4; i++)
+    {
+        new_X = x + blocks[iType][iRotate][i][0];
+        new_Y = y + blocks[iType][iRotate][i][1];
+        drawUnitBlock(new_X, new_Y, color);
+    }
+}
+//创造blocks
+void genBlock()
+{
+    LandFlag = 0;
+    BLOCK_COUNT++;
+    time_t t;
+    time(&t);
+    srand((unsigned int)t);
+    type_all = rand() % 7;
+    rotate_all = rand() % 4;
+    current_x = 4;
+    current_y = 2;
+}
+
+//提前画出下一个方块
+void drawnewblock() {
+    int newblock = X_origin + BLOCK_WIDTH * num_X + 50;
+    setlinecolor(WHITE);
+    rectangle(newblock, Y_origin, newblock + 300, Y_origin + 300);
+    drawTetrisBlock(num_X + newblock / 2 / BLOCK_WIDTH, current_y, type_all, rotate_all, color[type_all]);
+}
+
+
+//画背景
+void drawBackground() 
+{
+    setbkcolor(RGB(138, 43, 226));
+    cleardevice();
+    setlinecolor(WHITE);
+    rectangle(X_origin, Y_origin, X_origin + BLOCK_WIDTH * num_X, Y_origin + BLOCK_WIDTH * num_Y);
+    for (int i =0; i<=num_X; ++i) 
+    {
+        for (int j =0; j<=num_Y; ++j) 
+        {
+            if (LandedBlock[i][j] > 0) {
+
+                drawUnitBlock(i, j, color[LandedBlock[i][j]-1]);
+            }
+        }
+    }
+    int newblock = X_origin + BLOCK_WIDTH * num_X+50;
+    setlinecolor(WHITE);
+    rectangle(newblock, Y_origin, newblock + 300, Y_origin + 300);
+ 
+}
+
+void landBlock(int x, int y, int Type, int Rotate) 
+{
+    int CoordX, CoordY;
+    for (int j = 0; j < 4; j++) 
+    {
+        CoordX = x + blocks[Type][Rotate][j][0];
+        CoordY = y + blocks[Type][Rotate][j][1];
+        LandedBlock[CoordX][CoordY] = block_color[Type];
+    }
+    LandFlag = 1;
+}
+
+
+bool canGoLeft(int x,int y,int iType,int iRotate)
+{
+    int i;
+    int willBeX, willBeY; 
+    for (i = 0; i < 4; i++)
+    {
+        willBeX = x + blocks[iType][iRotate][i][0] - 1;
+        willBeY = y + blocks[iType][iRotate][i][1];
+        if (willBeX < 0) {
+            return false;
+        }
+        if (LandedBlock[willBeX][willBeY] > 0) {
+            
+            return false;
+        }
+    }
+    return true;
+}
+
+bool canGoRight(int x, int y, int Type, int Rotate)
+{
+    int i;
+    int willBeX, willBeY;
+    for (i = 0; i < 4; i++)
+    {
+        willBeX = x + blocks[Type][Rotate][i][0]+ 1;
+        willBeY = y + blocks[Type][Rotate][i][1] ;
+        if (willBeX >=num_X) {
+            return false;
+        }
+        if (LandedBlock[willBeX][willBeY] > 0) {
+            return false;
+        }
+
+    }
+    return true;
+}
+
+
+
+bool canFall(int x, int y, int Type, int Rotate)
+{
+    int i;
+    int willBeX, willBeY;
+    for (i = 0; i < 4; i++)
+    {
+        willBeX = x + blocks[Type][Rotate][i][0];
+        willBeY = y + blocks[Type][Rotate][i][1] +1;
+       
+        if (willBeY>=num_Y|| LandedBlock[willBeX][willBeY] > 0) {
+           
+            return false;
+        }
+        
+    }
+    return true;
+}
+
+bool canRotate(int x, int y, int Type, int Rotate)
+{
+    int i;
+    int willBeX, willBeY;
+    int NewRotate = Rotate + 1;
+    if (NewRotate > 3) 
+    {
+        NewRotate = 0;
+    }
+        for (i = 0; i < 4; i++)
+        {
+            willBeX = x + blocks[Type][NewRotate][i][0];
+            willBeY = y + blocks[Type][NewRotate][i][1];
+            if (willBeX < 0 || willBeX >= num_X || willBeY < 0 || willBeY >= num_Y) {
+                return false;
+            }
+            if (LandedBlock[willBeX][willBeY] > 0) {
+                return false;
+            }
+        }
+    return true;
+}
+void moveBlock(char input) 
+{
+    if (input == 'a') 
+    {
+        if (canGoLeft(current_x,current_y,type_all,rotate_all)) 
+        {
+            current_x--;
+            drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+        }
+        
+    }
+    else if (input == 'd') 
+    {
+
+        if (canGoRight(current_x, current_y, type_all, rotate_all)) 
+        {
+            current_x++;
+            drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+        }
+       
+    }
+    else if (input == 's') 
+    {
+            if (canFall(current_x, current_y, type_all, rotate_all)) 
+            {
+                current_y++;
+                drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+            }
+            else 
+            {
+                landBlock(current_x, current_y, type_all, rotate_all);
+            }     
+    }
+    else if (input == 'w') 
+    {
+        if (canRotate(current_x, current_y, type_all, rotate_all)) 
+        {
+            rotate_all++;
+            if (rotate_all > 3) 
+            {
+                rotate_all = 0;
+            }
+            drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+        }
+    }
+}
+//判断消行
+bool clearcheck(int Rowld) 
+{
+    for (int i = 0; i < num_X; i++) 
+    {
+        if (LandedBlock[i][Rowld] <=0) 
+        {
+            return false;
+        }
+    }
+    return true;
+}
+void removeRow(int Rowld) 
+{
+    for (int rowX = 0; rowX < num_X; rowX++) 
+    {
+        for (int rowY = Rowld; rowY > 0; rowY--) 
+        {
+            LandedBlock[rowX][rowY] = LandedBlock[rowX][rowY - 1];
+        }
+    }
+}
+//移动方格
+void removeWoleblocks() 
+{
+    for (int i = 0; i < num_Y; i++) 
+    {
+        if (clearcheck(i)) 
+        {
+            removeRow(i);
+        }
+    }
+}
+
+
+void autoMove()
+{
+        if (canFall(current_x, current_y, type_all, rotate_all))
+        {
+            current_y++;
+            Sleep(300);
+            drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+        }
+        else {
+            landBlock(current_x, current_y, type_all, rotate_all);
+        }
+}
+
+
+
+int main() 
+{
+    initgraph(windowWidth, windowHeight);
+    drawBackground();
+    genBlock();
+    drawTetrisBlock(current_x,current_y,type_all,rotate_all,color[type_all]);
+
+    char input;
+    while (1) 
+    {
+        BeginBatchDraw();
+        if (_kbhit()) 
+        {
+            input = _getch();
+            if (input != 'q') 
+            {
+                moveBlock(input);
+                if (LandFlag != 1) 
+                {
+                    removeWoleblocks();
+                    drawBackground();
+                    drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+
+                }
+                else 
+                {
+                    removeWoleblocks();
+                    drawBackground();
+                    genBlock();
+                  
+                }
+            }
+            else if (input == 'q')
+                break;
+            FlushBatchDraw();
+        }
+        else 
+        { 
+            if (LandFlag != 1) {
+                autoMove();
+                drawBackground();
+                drawTetrisBlock(current_x, current_y, type_all, rotate_all, color[type_all]);
+            }
+            else {
+                genBlock();
+                autoMove();
+                removeWoleblocks();
+                drawBackground();
+               
+            }
+        }
+       EndBatchDraw();
+    }
+    _getch();
+    closegraph();
+    return 0;
+}

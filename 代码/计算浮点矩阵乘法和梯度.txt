@@ -1,0 +1,201 @@
+运算符重载：计算浮点矩阵乘法和梯度
+
+total submissions: 12timespassed: 6timespassing rate: 50.00%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+题目：运算符重载：计算浮点矩阵乘积的均值和输入矩阵的梯度
+
+
+描述： 请创建一个名为Matrix的类，用于表示浮点数矩阵。
+
+这个类需要重载乘法运算符*，以便能够进行矩阵的乘法运算。
+
+该类还需要重载单目运算符!，以便能够计算矩阵的转置。
+
+该类还需要实现一个mean成员函数用于计算当前矩阵的均值。
+
+你需要实现A和B两个矩阵的乘法得到乘积C矩阵,并计算乘积C矩阵的均值.
+
+你需要实现分别实现名为gradient_mean， gradient_dot的方法，分别用于计算均值和输入矩阵的梯度。
+
+
+输入: 三个整数m,n,p，表示两个矩阵A和B的行数和列数(mxn, nxp),所有值是在0-1之间的float数,需要你随机生成浮点数,并按行优先分别填充A和B矩阵。
+
+输出: 第一行输出两个矩阵乘积的均值,
+
+空一行
+
+接下来m行, n列,表示A梯度.
+
+空一行
+
+接下来n行, p列,表示B梯度.
+
+
+其他信息:
+
+矩阵乘法是一种二元运算，它接受两个矩阵作为输入，并生成一个新的矩阵作为输出。
+
+如果我们有两个矩阵A和B，其中A的形状为(m, n)，B的形状为(n, p)，那么他们的乘积C=AB的形状为(m, p)。
+
+A和B矩阵的每个元素是通过将A的行向量与B的列向量对应求内积得到的。
+
+矩阵乘法的梯度可以通过链式法则来计算:
+
+如果我们有一个标量输出k，它是通过矩阵乘法得到的，即k = mean(C), C=A*B，其中mean表示矩阵的均值（即所有元素的和除以元素的数量）,求k对A和B的梯度，即dk/dA和dk/dB可以通过两步来完成。
+
+第一步:求解k对C的梯度，即gC。
+
+    k 是 C 的所有元素的平均值，所以 k 对 C 的每个元素的偏导数都是 1/(mn)，其中 m 和 n 是 C 的行数和列数。因此，gC 是一个与 C 形状相同的矩阵，所有元素都是 1/(mn)。
+
+第二步,求解gC 对 A 和 B 的梯度gA和gB。
+
+    根据矩阵乘法的链式法则，我们有：
+
+    gC 对 A 的梯度：gA = gC * B^T，其中 * 表示矩阵乘法，B^T 表示 B 的转置。
+
+    gC 对 B 的梯度：gB = A^T * gC，其中 A^T 表示 A 的转置。
+
+    注意着两步都是矩阵乘法。
+
+注意:如果计算超时,请注意优化计算过程.
+
+sample inpput and output
+样例1
+input:
+2 2 2
+output:
+0.961748
+
+0.365177 0.348034
+0.365177 0.348034
+
+0.316001 0.316001
+0.359278 0.359278
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <iostream>;
+#include <vector>;
+#include <random>;
+
+class Matrix {
+public:
+    std::vector< std::vector<float>> data;
+
+    Matrix(int rows, int cols) {
+        data.resize(rows, std::vector<float> (cols));
+    }
+
+    Matrix operator*(const Matrix& other) const {
+        int m = data.size();
+        int n = data[0].size();
+        int p = other.data[0].size();
+        Matrix result(m, p);
+        for (int i = 0; i<m; ++i) {
+            for (int j = 0; j<p; ++j) {
+                float sum = 0.0;
+                for (int k = 0; k<n; ++k) {
+                    sum += data[i][k] * other.data[k][j];
+                }
+                result.data[i][j] = sum;
+            }
+        }
+        return result;
+    }
+
+    Matrix operator!() const {
+        int m = data.size();
+        int n = data[0].size();
+        Matrix result(n, m);
+        for (int i = 0; i<m; ++i) {
+            for (int j = 0; j<n; ++j) {
+                result.data[j][i] = data[i][j];
+            }
+        }
+        return result;
+    }
+
+    float mean() const {
+        float sum = 0.0;
+        int totalElements = data.size() * data[0].size();
+        for (const auto&row: data) {
+            for (float value : row) {
+                sum += value;
+            }
+        }
+        return sum / totalElements;
+    }
+
+    Matrix gradient_mean() const {
+        int m = data.size();
+        int n = data[0].size();
+        Matrix gradient(m, n);
+        float gradientValue = 1.0 / (m * n);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j<n; ++j) {
+                gradient.data[i][j] = gradientValue;
+            }
+        }
+        return gradient;
+    }
+
+    static Matrix gradient_dotA(const Matrix&A, const Matrix&B, const Matrix&  gC) {
+        Matrix gA = gC * !B;
+        return gA;
+    }
+    static Matrix gradient_dotB(const Matrix& A, const Matrix& B, const Matrix& gC) {
+        Matrix gB = !A * gC;
+        return gB;
+    }
+
+    void printGradient() const {
+        int m = data.size();
+        int n = data[0].size();
+        for (int i = 0; i<m; ++i) {
+            for (int j = 0; j< n; ++j) {
+                std::cout<<data[i][j];
+                if (j != n - 1) std::cout << " ";
+            }
+            std::cout<< std::endl;
+        }
+    }
+};
+
+int main() {
+    int m, n, p;
+    std::cin>>m>>n>>p;
+
+    std::mt19937 generator(0);
+    std::uniform_real_distribution<float>dis(0.0, 1.0);
+
+    Matrix A(m, n), B(n, p);
+
+    for (int i = 0; i<m; ++i) {
+        for (int j = 0; j<n; ++j) {
+            A.data[i][j] = dis(generator);
+        }
+    }
+
+    for (int i = 0; i<n; ++i) {
+        for (int j = 0; j<p; ++j) {
+            B.data[i][j] = dis(generator);
+        }
+    }
+
+    Matrix C = A * B;
+    float mean = C.mean();
+    std::cout<< mean<<std::endl<<std::endl;
+
+    Matrix gC = Matrix(m, p).gradient_mean();
+    Matrix gA = Matrix::gradient_dotA(A, B, gC);
+    Matrix gB = Matrix::gradient_dotB(A, B, gC);
+
+    gA.printGradient();
+    std::cout<<std::endl;
+    gB.printGradient();
+
+    return 0;
+}

@@ -1,0 +1,67 @@
+友元-输出两坐标点之间的距离
+
+total submissions: 543timespassed: 179timespassing rate: 32.97%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+定义一个Point类，包含私有数据成员为浮点数类型x和y，以及成员函数display()输出点的坐标，
+
+在类外定义一个普通函数distance()，在Point类中将其声明为友元函数，在主函数中调用distance函数，输出两个坐标点之间的距离。
+
+输入：
+
+4个数，分别是A、B坐标点x和y的值，用空格分隔；
+
+输出：
+
+(A.x, A.y)
+
+(B.x, B.y)
+
+A、B坐标间的距离，保留两位小数。 
+
+sample inpput and output
+样例1
+input:
+1.2 2 3 4.2
+output:
+(1.2, 2)
+(3, 4.2)
+2.84
+
+
+#include<iostream>
+#include<iomanip>
+#include<math.h>
+using namespace std;
+
+class Point {
+private:
+	float x;
+	float y;
+public:
+	friend void distance(Point&A, Point&B);
+	void Display(float result);
+};
+void Display(float result) {
+	cout << setiosflags(ios::fixed);
+	cout.precision(2);
+	cout << result;
+}
+
+void distance(Point&A,Point&B) {
+	cin >> A.x >> A.y >> B.x >> B.y;
+	float d1 = A.x - B.x;
+	float d2 = A.y - B.y;
+	float result = sqrt(d1*d1+d2*d2);
+	cout << "(" << A.x << ", " << A.y << ")" << endl;
+	cout << "(" << B.x << ", " << B.y << ")" << endl;
+	Display(result);
+}
+int main() {
+	Point A;
+	Point B;
+	distance(A,B);
+	return 0;
+}

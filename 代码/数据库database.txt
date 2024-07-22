@@ -1,0 +1,128 @@
+数据库操作
+
+total submissions: 61timespassed: 7timespassing rate: 11.48%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+设计一个数据库类Database，Database包含一个key和value映射的数据区，可以通过key来查找value，同时可以在key的位置处更新value或者插入新的value。
+
+由于Database为数据库，要求其任意的实例化对象都共享相同的数据区，并且对于数据的更新等操作不能出现冲突。
+
+请实现Database类，其包含query，insert，delete，update等操作。
+
+输入：第一行输入整数n
+
+          接下来n行分别输入key value和操作(q/i/d/u)，每一个操作将实例化一个Databse类对象来实现。
+
+输出：按行打印Database的数据区（输出key value键值对）
+
+sample inpput and output
+样例1
+input:
+2
+n g i
+n k u
+output:
+n k
+样例2
+input:
+3
+name link i
+name zelda u
+location hyrule i
+output:
+name zelda
+location hyrule
+
+
+
+
+#include <iostream>  
+#include <vector>  
+#include <string>  
+#include <algorithm>
+#include<string>
+using namespace std;
+class Database {
+private:
+    static vector<pair<string,string>> dataArea;
+    Database() {}
+    ~Database() {}
+public:
+    static Database& getInstance() {
+        static Database instance;
+        return instance;
+    }
+    string query(const string& key) {
+        for (const auto& pair : dataArea) {
+            if (pair.first == key) {
+                return pair.second;
+            }
+        }
+    }
+    void insert(const string& key, const string& value) {
+        for (const auto& pair : dataArea) {
+            if (pair.first == key) {
+                break;   
+            }
+        }
+        dataArea.push_back(make_pair(key, value));
+    }
+
+    void deleteKey(const string& key) {
+        for (auto it = dataArea.begin(); it != dataArea.end(); ) {
+            if (it->first == key) {
+                it = dataArea.erase(it); 
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+
+    void update(const string& key, const string& value) {
+        for (auto& pair : dataArea) {
+            if (pair.first == key) {
+                pair.second = value;
+            }
+        }
+    }
+    void printData() const {
+        for (const auto& pair : dataArea) {
+            cout << pair.first << " " << pair.second << endl;
+        }
+    }
+};
+
+vector<pair<string,string>> Database::dataArea;
+
+int main() {
+    int n;
+    cin >> n;
+    cin.ignore();  
+
+    Database& db = Database::getInstance();  
+    string key, value;
+    char operation;
+    for (int i = 0; i < n; i++) {
+        cin >> key;
+        if(key!=" ")
+            cin >> value;
+        cin >> operation;
+        if (operation == 'i') {
+            db.insert(key, value);
+        }
+        else if (operation == 'u') {
+            db.update(key, value);
+        }
+        else if (operation == 'd') {
+            db.deleteKey(key);
+        }
+      /*  else if (operation == 'q') {
+            cout << db.query(key) << endl;
+        }*/
+    }
+    db.printData(); 
+    return 0;
+}

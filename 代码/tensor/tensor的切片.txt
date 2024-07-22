@@ -1,0 +1,308 @@
+实现Tensor的简单计算。设计一个Tensor类型，根据输入shape，随机种子为0，生成Tensor对象。
+
+实现Tensor的切片，切片的意思是，按照范围从一个大的Tensor中返回一部分数据。
+
+比如A[1:3,2:4,3:5]表示返回A张量的1-3行，2-4行，3-5行的子Tensor，注意：切片通常不包含上界，比如1-3行指的是1、2两行数据。
+
+输入：三行相同个数以空格隔开的整型数，分别为Tensor的shape，开始切片的坐标（比如1 2 3），结束切片的坐标（比如3 4 5）.
+
+输出：输出原始Tensor和切片获得的Tensor
+
+sample inpput and output
+样例1
+input:
+2 3 4
+0 0 0
+1 2 3
+output:
+Tensor:
+0.548814 0.592845 0.715189 0.844266
+0.602763 0.857946 0.544883 0.847252
+0.423655 0.623564 0.645894 0.384382
+
+0.437587 0.297535 0.891773 0.056713
+0.963663 0.272656 0.383442 0.477665
+0.791725 0.812169 0.528895 0.479977
+
+Tensor split:
+0.548814 0.592845 0.715189
+0.602763 0.857946 0.544883
+
+#include<iostream>  
+#include<random>  
+#include<vector>
+using namespace std;
+class Tensor {
+private:
+    float* data;
+    vector<int> shape;
+    int size;
+public:
+    void createTensor(vector<int>shape);
+    void generate(int size, float* data);
+    float getElement(int *dim_index);
+    void Display(float* data,vector<int>shape);
+    void slice(vector<int>start, vector<int>end,float*data, vector<int>shape);
+    int getSize() {
+        return size;
+    }
+    float* getData() {
+        return data;
+    }
+}tensor;
+
+void Tensor::generate(int size, float* data) {
+    mt19937 generator(0);
+    uniform_real_distribution<float> distribution(0.0, 1.0);
+    for (int i = 0; i < size; ++i) {
+        data[i] = distribution(generator);
+    }
+}
+
+void Tensor::createTensor(vector<int>shape) {
+    this->shape = shape;
+    size = 1;
+    for (int i = 0; i < shape.size(); i++) {
+        size *= shape[i];
+    }
+    data = new float[size];
+}
+void Tensor::Display(float*data,vector<int>shape){
+     int last_dim1 = shape.back();
+     int last_dim2 = shape[shape.size() - 2];
+     int total_size = last_dim1 * last_dim2;
+     
+         if (shape.size() < 3) {
+             for (int i = 0; i < size; i++) {
+                 cout << data[i];
+                 if ((i + 1) % shape[1] != 0)
+                     cout << " ";
+                 else
+                     cout << endl;
+             }
+         }
+         else {
+             int count_size = 1;
+             for (size_t i = 0; i < shape.size() - 2; ++i) {
+                 count_size *= shape[i];
+             }
+             for (int i = 0; i < count_size; i++) {
+                 for (int j = 0; j < last_dim1; j++) {
+                     for (int k = 0; k < last_dim2; k++) {
+                         int position = i * total_size + j * last_dim2 + k;
+                         cout << data[position];
+                         if ((position+1) % shape.back()!= 0)
+                             cout << " ";
+                         else
+                             cout << endl;
+                     }
+                 }
+                 if (i < count_size - 1) {
+                     cout << endl;
+                 }
+             }
+         }
+     }
+void Tensor::slice(vector<int>start, vector<int>end,float*data,vector<int>shape) {
+
+    vector<int> new_shape(start.size());
+    int ndim = new_shape.size();
+    int index[100];
+    for (int i = 0; i < ndim; i++) {
+        index[i] = start[i];
+        new_shape[i] = end[i] - start[i];
+    }
+    Tensor result;
+    result.createTensor(new_shape);
+    int s = result.getSize();
+   
+    int dim_index;
+    for (int i = 0; i < s; i++) {
+        dim_index = index[0];
+        for (int i = 1; i < shape.size(); i++) {
+            
+            dim_index = (shape[i] * dim_index + index[i]);
+        }
+        result.getData()[i] = data[dim_index];
+        index[ndim - 1]++;
+        for (int j = ndim - 1; j >= 0; j--) {
+            if (index[j] == end[j]){
+                index[j] = start[j];
+                if (j != 0)
+                    index[j - 1]++;
+            }
+        }
+    }
+
+    //int result_index = 0;
+    //int last_dim1 = shape.back();
+    //int last_dim2 = shape[shape.size() - 2];
+    //int total_size = last_dim1 * last_dim2;
+
+    //int start_size = 1;
+    //int position;
+    //for (int i = 0; i < start.size() - 2; ++i) {
+    //    start_size *= start[i];
+    //}
+
+    //position = start_size * total_size + start.back() * last_dim2 + start.back();
+    //int last_end_size = new_shape.back() * new_shape[shape.size() - 2];
+    //for (int i = 0; i < result.getSize(); i++) {
+
+    //    for (int j = 0; j < last_end_size; j++) {
+    //        result.data[result_index] = data[position];
+    //        result_index++;
+    //        position++;
+
+    //        if ((result_index) % new_shape.back() == 0)
+    //            position += shape.back() - new_shape.back();
+    //    }
+    //    position = (i + 1) * total_size + start.back() * last_dim2 + start.back();
+    //}
+    result.Display(result.getData(), new_shape);
+}
+
+int main() {
+    Tensor tensor;
+    vector<int> shape;
+    int dim_value;
+    int dim_num=0;
+    while (cin >> dim_value) {
+        dim_num++;
+        shape.push_back(dim_value);
+        if (cin.peek() == '\n') {
+            break;
+        }
+        cin.ignore();
+    }
+
+    vector<int>start(dim_num); vector<int>end(dim_num);
+    for (int i = 0; i < dim_num; i++) {
+        cin >> start[i];
+        cin.ignore();
+    }
+    for (int i = 0; i < dim_num; i++) {
+        cin >> end[i];
+        cin.ignore();
+    }
+
+    tensor.createTensor(shape);
+    tensor.generate(tensor.getSize(), tensor.getData());;
+    cout << "Tensor:" << endl;
+    tensor.Display(tensor.getData(),shape);
+    cout << endl;
+
+    Tensor split;
+    cout << "Tensor split:" << endl;
+    split.slice(start, end,tensor.getData(),shape);
+
+    delete[]tensor.getData();
+    return 0;
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include<stdlib.h>
+#include<random>
+#include<iostream>
+#include<sstream>
+using namespace std;
+class Tensor
+{
+public:
+	int* m_dim_value;
+	float* data;
+	int m_dim_num, size = 1;
+	Tensor(int dim_num, int* dim_value)
+	{
+		mt19937 generator(0);
+		m_dim_num = dim_num;
+		m_dim_value = dim_value;
+		for (int i = 0; i < dim_num; i++)
+		{
+			size = size * dim_value[i];
+		}
+		data = new float[size];
+		uniform_real_distribution<float> distribution(0.0, 1.0);
+		for (int i = 0; i < size; i++)
+		{
+			data[i] = distribution(generator);
+		}
+	}
+	float GetElement(int* dim_index)
+	{
+		int index = dim_index[0], i;
+		for (i = 1; i < m_dim_num; i++)
+		{
+			index = (m_dim_value[i] * index + dim_index[i]);
+		}
+		return data[index];
+	}
+	void Slice(int slice[][100])
+	{
+		int index[100],S = 1;
+		for (int i = 0; i < m_dim_num; i++)
+		{
+			index[i] = slice[0][i];
+			S *= slice[1][i] - slice[0][i];
+		}
+		for (int i = 0; i < S; i++)
+		{
+			cout<<GetElement(index);
+			index[m_dim_num-1]++;
+			if (index[m_dim_num - 1] == slice[1][m_dim_num - 1])cout << endl;
+			else cout << ' ';
+			if(index[m_dim_num - 2] == slice[1][m_dim_num - 2]-1&& index[m_dim_num - 1] == slice[1][m_dim_num - 1])cout << endl;
+			for (int j = m_dim_num - 1; j >= 0; j--)
+			{
+				if (index[j] == slice[1][j])
+				{
+					index[j] = slice[0][j];
+					if(j!=0)index[j - 1]++;
+				}
+			}
+		}
+	}
+	~Tensor()
+	{
+		delete[] data;
+	}
+	void Display()
+	{
+		for (int i = 0; i < size; i++)
+		{
+			cout << data[i];
+			if ((i + 1) % m_dim_value[m_dim_num - 1] == 0)cout << endl;
+			else cout << " ";
+			if ((i + 1) % (m_dim_value[m_dim_num - 2] * m_dim_value[m_dim_num - 1]) == 0)cout << endl;
+		}
+	}
+};
+int main()
+{
+
+	int dim_num=0, dim_value[100];
+	char c[100];
+	cin.getline(c, 100);
+	stringstream s(c);
+	while (s >> dim_value[dim_num])
+	{
+		dim_num++;
+	}
+	int slice[2][100];
+	for (int i = 0; i < dim_num; i++)
+	{
+		cin >> slice[0][i];
+	}
+	for (int i = 0; i < dim_num; i++)
+	{
+		cin >> slice[1][i];
+	}
+	Tensor t(dim_num, dim_value);
+	cout << "Tensor:" << endl;
+	t.Display();
+	cout << "Tensor split:" << endl;
+	t.Slice(slice);
+}
+
+
+

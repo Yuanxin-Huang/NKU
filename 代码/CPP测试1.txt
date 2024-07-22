@@ -1,0 +1,78 @@
+
+
+
+
+
+
+#include<stdio.h>
+#include<string.h>
+int main() {
+	char a[100][1000];
+	int N, i;
+	int zheng(char a[1000]);
+	scanf("%d\n", &N);
+	for (int i = 0; i < N; i++) {
+		gets_s(a[i]);
+	}
+	int a1[100][1000];
+	int count[100] = { 0 };
+	for (int i = 0; i < N; i++) {
+		int j = 0;
+ 		while (a[i][j] != '\0') {
+			if (a[i][j] == '5' || a[i][j] >= 'a' && a[i][j] <= 'z'
+				|| a[i][j] >= 'A' && a[i][j] <= 'Z') {
+				a[i][j] = ' ';//空格
+			}
+			j++;
+		}
+		int n = 0, begin, end = 0,t=0;
+		for (n = 0; n<strlen(a[i]); n++) {
+			begin = n;
+			int flag = 0;
+			int m = 0;
+			while (a[i][n] != ' ') {
+				end = n;
+				flag = 1;
+				n++;
+				if (n >= strlen(a[i]))
+					break;
+			}
+			if (flag == 1) {
+				n--;
+				if (end == begin) {
+					a1[i][t] = a[i][begin]-'0';
+					t++;
+					count[i]++;
+				}
+				else {
+					int x = 0;
+					for (int k = 0; k < end - begin + 1; k++) {
+						x = x * 10 + (a[i][begin+k]-'0');
+					}
+					a1[i][t] = x;
+					t++;
+					count[i]++;
+				}
+			}
+		}
+	}
+	int temp;
+	for (int k = 0; k < N; k++) {
+		for (int i = 0; i < count[k]-1; i++) {
+			for (int j = 0; j < count[k]-1; j++) {
+				if (a1[k][j] > a1[k][j + 1]) {
+					temp = a1[k][j];
+					a1[k][j] = a1[k][j+1];
+					a1[k][j+1] = temp;
+				}
+			}
+		}
+	}//排序
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j<count[i]; j++) {
+			printf("%d ",a1[i][j]);
+		}
+		printf("\n");
+	}
+	return 0;
+}

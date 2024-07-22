@@ -1,0 +1,30 @@
+画圆
+#include<graphics.h>
+#include<conio.h>
+#include<math.h>
+int main() 
+{
+	initgraph(1024,640);
+
+	setbkcolor(MAGENTA);
+	cleardevice();
+
+	int count = 100;
+	int R_center = 120;
+	int R_x = 512;
+	int R_y = 320;
+	setlinecolor(WHITE);
+	circle(512,320,R_center);
+
+	float degree = 6.2830 / count;
+	setlinecolor(YELLOW);
+	int i = 0;
+	for (i = 0; i < count; i++) 
+	{
+		circle(R_x+R_center*cos(i*degree),R_y-R_center * sin(i * degree), 50);
+	}
+
+	_getch();
+	closegraph();
+	return 0;
+}

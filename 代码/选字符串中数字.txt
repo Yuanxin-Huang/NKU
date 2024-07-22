@@ -1,0 +1,35 @@
+选中字符串中的数字
+#include<stdio.h>
+#include<string.h>
+int main() 
+{
+    void num(char* str);
+	char s[1000];
+	gets_s(s);
+    num(s);
+    printf("%s",s);
+    return 0;
+}
+void num(char* str)
+{
+    char* p = str, * q = str;
+    int f = 1;
+    while (*q != '\0')
+    {
+        if (*q == '-' && f)
+        {
+            *p++ = *q++;
+            f = 0;
+        }
+        else if (*q >= '0' && *q <= '9')
+        {
+            f = 0;
+            *p++ = *q++;
+        }
+        else
+        {
+            q++;
+        }
+    }
+    *p = '\0';
+}

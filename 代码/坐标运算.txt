@@ -1,0 +1,136 @@
+运算符重载：坐标运算
+
+total submissions: 121timespassed: 35timespassing rate: 28.93%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+请创建一个名为Point和一个名为Polar的类，分别用于表示笛卡尔坐标和极坐标下的点。
+
+实现这两个类的加和减法,需要重载加法运算符+和减法运算符-，以便能够进行笛卡尔坐标和极坐标的加减运算。
+
+
+输入： 输入包含三行，前两行每行包含两个浮点数, 一个字符p/q分别表示Point和Polar的坐标, 最后一行输入一个字符+/-表示运算符。输入错误的符号则输出error。
+
+
+输出： 输出运算结果,运算结果应该为两行,第一行为笛卡尔坐标下的结果的两个坐标,第二行为极坐标下的运算结果的两个坐标。
+
+
+注意:  对于极坐标,你总是需要将其坐标转换到笛卡尔坐标下进行计算，然后再转换回极坐标，来“加”这两个极坐标。极坐标的角度为弧度，范围为[-pai,pai]。 使用float数据类型来存储和计算坐标.，使用atan2计算弧度。
+
+sample inpput and output
+样例1
+input:
+2 3 p
+4 5 p
++
+output:
+(6, 8)
+(10, 0.927295)
+样例2
+input:
+2 3 p 
+5 3.1415926 q
++
+output:
+(-3, 3)
+(4.24264, 2.35619)
+样例3
+input:
+2.14 3.14 q
+4.5 6.8 p
+-
+output:
+(-6.64, -6.79659)
+(9.50175, -2.34454)
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include<iostream>
+#include<cmath>
+using namespace std;
+void toPolar(float x, float y) {
+	float x1 = sqrt(x * x + y * y);
+	float y1 = atan2(y,x);
+		cout << "(" << x1 << ", " << y1 << ")";
+
+}
+class Point {
+private:
+	float px;
+	float py;
+public:
+
+	Point(float x = 0, float y = 0) : px(x), py(y) {}
+	
+	void operator+(const Point& other) {
+		float x1 = px + other.px;
+		float y1 = py + other.py;
+		cout << "(" << x1 << ", " << y1 << ")" << endl;
+		toPolar(x1, y1);
+	}
+	void operator-(const Point& other) {
+		float x1 = px - other.px;
+		float y1 = py - other.py;
+		cout << "(" << x1 << ", " << y1 << ")" << endl;
+		toPolar(x1, y1);
+	}
+	void operator =(Point other) {
+		this->px = other.px;
+		this->py = other.py;
+	}
+
+
+};
+class Polar {
+public:
+	float r;
+	float theta;
+	
+	Polar(float qx = 0, float qy = 0) :r(qx), theta(qy) {}
+
+};
+Point fromPoint(Polar& other) {
+	Point trans(other.r * cos(other.theta), other.r * sin(other.theta));
+	return trans;
+}
+int main() {
+	float px, py;
+	float qx, qy;
+	char op,type1,type2;
+	cin >> px >> py >> type1;
+	cin >> qx >> qy >> type2;
+	cin.ignore();
+	cin >> op;
+	Point p(px, py);
+	Point q(qx, qy);
+	if (op == '+') {
+		if (type1 == 'q') {
+
+			Polar p1(px, py);
+			p = fromPoint(p1);
+		}
+			if (type2 == 'q') {
+				Polar q1(qx, qy);
+				q = fromPoint(q1);
+			}
+		p + q;
+	}
+	else if(op=='-') {
+		if (type1 == 'q') {
+			Polar p1(px, py);
+			p = fromPoint(p1);
+		}
+		if (type2== 'q') {
+			Polar q1(qx, qy);
+			q = fromPoint(q1);
+			}
+		p - q;
+	}
+	else
+		cout << "error" <<endl;
+	return 0;
+			
+}

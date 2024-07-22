@@ -1,0 +1,465 @@
+继承：派生日期时间类
+
+total submissions: 121timespassed: 14timespassing rate: 11.57%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+设计日期类Date和时间类Time，并以此两类为基类派生日期时间类DateTime，日期类包括年、月、日成员，时间类包括时、分、秒成员，日期时间类能够实现日期时间的求差、比较大小的功能。
+
+ 要求：
+
+ 1、重载==运算符，判断两个日期时间是否相等。
+
+ 2、重载<和>运算符，判断两个日期时间大小，规定：过去的时间比现在的时间小，比如2023-3-3 18:45:46 > 2022-7-8 19:54:56。
+
+ 3、重载减运算符-，可以对日期时间求差。
+
+ 4、假设每个月都是30天，不考虑闰年，不考虑公元前，24小时制，24点表示为0:0:0即可。
+
+ 5、输出格式为XX-XX-XX XX-XX-XX，日期和时间用空格隔开，内部用-隔开，如2019-1-8 18：12：0，其中秒不需要用“00”表示。
+
+输入格式
+
+ 第 1 行：12个整数，分别是两个对象的 年、月、日、时、分、秒，空格隔开。
+
+输出格式
+
+ 第 1 行：第一个对象的日期时间
+
+ 第 2 行：第二个对象的日期时间
+
+ 第 3 行：是否相等
+
+ 第 4 行：第一个对象是否大于第二个对象
+
+ 第 5 行：第一个对象是否小于第二个对象
+
+ 第 6 行：两个对象时间差，若dt1比dt2大，则输出dt1 - dt2，否则：dt2 - dt1
+
+sample inpput and output
+样例1
+input:
+2022 9 1 19 57 58 2022 9 1 19 57 58
+output:
+2022-9-1 19:57:58
+2022-9-1 19:57:58
+dt1 == dt2 : true
+dt1 > dt2 : false
+dt1 < dt2 : false
+dt2 - dt1 : 0-0-0 0:0:0
+
+
+
+
+
+#include <iostream>  
+#include <sstream>  
+#include<cmath>
+using namespace std;
+// Date类  
+class Date {
+public:
+    int year, month, day;
+
+    Date(int y, int m, int d) : year(y), month(m), day(d) {}
+    void setDate(int y, int m, int d) {
+        year = y;
+        month = m;
+        day = d;
+    }
+
+    void displayDate() const {
+        cout << year << "-" <<  month << "-"  << day;
+    }
+
+    friend istream& operator>>(istream& is, Date& date) {
+        is >> date.year >> date.month >> date.day;
+        return is;
+    }
+
+    friend ostream& operator<<(ostream& os, const Date& date) {
+        date.displayDate();
+        return os;
+    }
+    
+};
+
+// Time类  
+class Time {
+public:
+    int hour, minute, second;
+
+    Time(int h, int m, int s) : hour(h), minute(m), second(s) {}
+
+    void setTime(int h, int m, int s) {
+        hour = h;
+        minute = m;
+        second = s;
+    }
+
+    void displayTime() const {
+        cout << hour << ":" <<  minute << ":" << second;
+    }
+
+    friend istream& operator>>(istream& is, Time& time) {
+        is >> time.hour >> time.minute >> time.second;
+        return is;
+    }
+
+    friend ostream& operator<<(ostream& os, const Time& time) {
+        time.displayTime();
+        return os;
+    }
+    
+};
+
+// Date_Time类  
+class Date_Time : public Date, public Time {
+public:
+    Date_Time(int y, int m, int d, int h, int mi, int s) : Date(y, m, d), Time(h, mi, s) {}
+
+    void setDateTime(int y, int m, int d, int h, int mi, int s) {
+        setDate(y, m, d);
+        setTime(h, mi, s);
+    }
+
+    void displayDateTime() const {
+        displayDate();
+        cout << " ";
+        displayTime();
+    }
+
+    friend istream& operator>>(istream& is, Date_Time& dt) {
+        is >> static_cast<Date&>(dt) >> static_cast<Time&>(dt);
+        return is;
+    }
+
+    friend ostream& operator<<(ostream& os, const Date_Time& dt) {
+        dt.displayDateTime();
+        /*os << endl; */ 
+        return os;
+    }
+
+     bool operator>(const Date_Time& other) const {
+        if (year > other.year) return true;
+        else if (year < other.year) return false;
+        else {
+            if (month > other.month) return true;
+            else if (month < other.month) return false;
+            else {
+                if (day > other.day) return true;
+                else if (day < other.day) return false;
+                else {
+                    if (hour > other.hour) return true;
+                    else if (hour < other.hour) return false;
+                    else {
+                        if (minute > other.minute) return true;
+                        else if (minute < other.minute) return false;
+                        else {
+                            if (second > other.second) return true;
+                            else if (second < other.second) return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+     bool operator=(const Date_Time& other) const {
+         if (year == other.year && month == other.month && day == other.day
+             && hour == other.hour && minute == other.minute && second == other.second)
+         {
+             return true;
+             
+         }
+
+         else return false;
+    }
+
+    Date_Time operator-(const Date_Time& other) const {
+        //int days1 = year * 360 + month * 30 + day;
+        //int days2 = other.year * 360 + other.month * 30 + other.day;
+        //int seconds1 = hour * 3600 + minute * 60 + second;
+        //int seconds2 = other.hour * 3600 + other.minute * 60 + other.second;       
+        //int day_diff = days1 - days2;
+        //int second_diff = seconds1 - seconds2;
+
+        //int time_diff = day_diff * 24 * 3600 + second_diff;
+
+        //int days_diff = time_diff / (24 * 3600);
+
+        //int years = days_diff / 360;
+        //int months = days_diff % 360 / 30;
+        //int days = (days_diff % 360) % 30/24;
+
+        //int hours = time_diff % (24 * 3600) / 3600;
+        //int minutes = (time_diff % 3600) / 60;
+        //int seconds = time_diff % 60;
+        long long  positon[6] = { 12,30,24,60,60,1 };
+        long long stride[6];
+        long long  ans = 1;
+        for (int i = 5; i >= 0; i--)
+        {
+            ans *= positon[i];
+            stride[i] = ans;
+        }
+
+        long long to_second1,to_second2;
+        long long  datatime1[6]{ 0 },datatime2[6]{ 0 };
+
+        datatime1[0] =year;
+        datatime1[1] =month;
+        datatime1[2] =day;
+        datatime1[3] =hour;
+        datatime1[4] =minute;
+        datatime1[5] =second;
+
+        datatime2[0] = other.year;
+        datatime2[1] = other.month;
+        datatime2[2] = other.day;
+        datatime2[3] = other.hour;
+        datatime2[4] = other.minute;
+        datatime2[5] = other.second;
+
+        to_second1=0,to_second2 = 0;
+        for (int i = 5; i >= 0; i--)
+        {
+            to_second1 += datatime1[i] * stride[i];
+            to_second2 += datatime2[i] * stride[i];
+        }
+    
+    int res[6] = { 0 };
+    long long temp = abs(to_second1 - to_second2);
+    for (int i = 0; i < 6; i++)
+    {
+        res[i] = temp / stride[i];
+        temp %= stride[i];
+    }
+
+        return Date_Time(res[0],res[1],res[2],res[3],res[4],res[5]);
+    }
+};
+
+int main() {
+    int y, m, d, h, mi, s;
+    cin >> y >> m >> d >> h >> mi >> s;
+    Date_Time dt1(y, m, d, h, mi, s);
+    cin >> y >> m >> d >> h >> mi >> s;
+    Date_Time dt2(y, m, d, h, mi, s);
+
+    cout << dt1 << endl;
+    cout << dt2 << endl;
+    if (dt1 = dt2) {
+        cout << "dt1 == dt2 : " << "true\n";
+        cout << "dt1 > dt2 : " << "false\n";
+        cout << "dt1 < dt2 : " << "false\n";
+        cout << "dt2 - dt1 : ";
+        (dt2 - dt1);
+    }
+    else if (dt1>dt2) {
+        cout << "dt1 == dt2 : " << "false\n";
+        cout << "dt1 > dt2 : " << "true\n";
+        cout << "dt1 < dt2 : " << "false\n";
+        cout << "dt2 - dt1 : ";
+        (dt1 - dt2);
+    }
+    else {
+        cout << "dt1 == dt2 : " << "false\n";
+        cout << "dt1 > dt2 : " << "false\n";
+        cout << "dt1 < dt2 : " << "true\n";
+        cout << "dt2 - dt1 : ";
+        cout<<(dt2 - dt1);
+    } 
+    return 0;
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+long long  positon[6] = { 12,30,24,60,60,1 };
+long long stride[6];
+class Date
+{
+public:
+	int year_;
+	int month_;
+	int day_;
+
+public:
+	Date() :year_(0), month_(0), day_(0) {};
+	~Date() {};
+};
+
+class Time
+{
+public:
+	int hour_;
+	int minute_;
+	int second_;
+public:
+	Time() :hour_(0), minute_(0), second_(0) {};
+	~Time() {};
+};
+
+class DateTime:public Date,public Time
+{
+public:
+	long long to_second;
+	long long  datatime_[6]{ 0 };
+	DateTime() {};
+	DateTime(int year, int month, int day, int hour, int minute, int second);
+	~DateTime() {};
+
+	//根据继承的对象内存模型，想直接对比两个对象24字节的位值，如果相同就一样
+	bool operator==(const DateTime& other);
+	bool operator>(const DateTime& other);
+	bool operator<(const DateTime& other);
+	void operator-(const DateTime& other);
+
+private:
+
+};
+
+ostream& operator<<(ostream& os,const DateTime& other)
+{
+	cout << other.year_ << "-" << other.month_ << "-" << other.day_ << " ";
+	cout << other.hour_ << ":" << other.minute_ << ":" << other.second_ << '\n';
+	return os;
+}
+
+
+DateTime::DateTime(int year, int month, int day, int hour, int minute, int second)
+{
+	long long  ans = 1;
+	for (int i = 5; i>=0; i--)
+	{
+		ans *= positon[i];
+		stride[i] = ans;
+	}
+
+	datatime_[0] = this->year_ = year;
+	datatime_[1] = this->month_ = month;
+	datatime_[2] = this->day_ = day;
+	datatime_[3] = this->hour_ = hour;
+	datatime_[4] = this->minute_ = minute;
+	datatime_[5] = this->second_ = second;
+
+	to_second = 0;
+	for (int i = 5; i >=0; i--)
+	{
+		to_second += datatime_[i] * stride[i];
+	}
+}
+
+bool DateTime::operator==(const DateTime& other)
+{
+	if (to_second == other.to_second)
+		return true;
+
+	return false;
+}
+
+bool DateTime::operator>(const DateTime& other)
+{
+	
+	if (to_second > other.to_second)
+		return true;
+	
+	return false;
+
+
+}
+
+bool DateTime::operator<(const DateTime& other)
+{
+	if (to_second < other.to_second)
+		return true;
+	
+	return false;
+
+}
+
+void DateTime::operator-(const DateTime& other)
+{
+	int res[6] = { 0 };
+	//if ((*this) < other)
+	//{
+	//	for (int i = 0; i < 6; i++)
+	//	{
+	//		res[i] = other.datatime_[i] - datatime_[i];
+	//		if (res[i] < 0)
+	//		{
+	//			res[i - 1] -= 1;
+	//			res[i] += positon[i-1];
+	//		}
+	//	}
+	//}
+	//else if ((*this) > other)
+	//{
+	//	for (int i = 0; i < 6; i++)
+	//	{
+	//		res[i] = datatime_[i] - other.datatime_[i];
+	//		if (res[i] < 0)
+	//		{
+	//			res[i - 1] -= 1;
+	//			res[i] += positon[i - 1];
+	//		}
+	//	}
+	//}
+	//else;
+
+
+	long long temp = abs(to_second - other.to_second);
+	for (int i = 0; i < 6; i++)
+	{
+		res[i] = temp / stride[i];
+		temp %= stride[i];
+	}
+
+	cout << res[0] << "-" << res[1] << "-" << res[2] << " ";
+	cout << res[3] << ":" << res[4] << ":" << res[5] << '\n';
+}
+
+
+int main()
+{
+	int arr[12];
+	for (int i = 0; i < 12; i++)	cin >> arr[i];
+
+	DateTime datetime1(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+	DateTime datetime2(arr[6], arr[7], arr[8],arr[9], arr[10], arr[11]);
+#ifdef Test
+	cout << datetime1.to_second << "  " << datetime2.to_second<<'\n';
+	cout <<( datetime1 == datetime2 )<< '\n';
+	cout << (datetime1 > datetime2) << '\n';
+	cout << (datetime1 < datetime2) << '\n';
+
+#endif
+
+	cout << datetime1 << datetime2;
+	cout << "dt1 == dt2 : ";
+	if (datetime1 == datetime2)
+		cout << "true\n";
+	else
+		cout << "false\n";
+
+	cout << "dt1 > dt2 : ";
+	if(datetime1 > datetime2)
+		cout << "true\n";
+	else
+		cout << "false\n";
+
+	cout << "dt1 < dt2 : ";
+	if (datetime1 < datetime2)
+		cout << "true\n";
+	else
+		cout << "false\n";
+
+	cout << "dt2 - dt1 : ";
+	(datetime1 - datetime2);
+
+	return 0;
+
+}

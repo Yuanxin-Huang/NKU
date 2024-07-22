@@ -1,0 +1,86 @@
+对象数组输入与输出
+
+total submissions: 268timespassed: 136timespassing rate: 50.75%
+
+memory limit: 15728640(BYTE)time limit: 100(MS)input limit: 100(line)output limit: 101(line)
+question description
+
+构建一个长方体的类，包括整型数据：长，宽，高。
+
+构造函数cuboid(),cuboid(int a,int b,int c)分别完成对对象的初始化（前者默认长宽高分别为10，后者完成将三个变量a，b，c相应的赋值给长、宽、高）。
+
+成员函数caculateV()完成长方体体积的计算。
+
+主函数：
+
+new一个对象数组，内放n个长方体的数据(长 宽 高)，输出每个长方体的体积。 
+
+输入：n，m，和m个长方体的长、宽、高，其中m小于等于n；
+
+输出：n个长方体的体积。
+
+注意：输出项行尾无空格。
+
+attachment
+
+sample inpput and output
+样例1
+input:
+5 3
+10 12 15
+15 18 20
+16 20 26
+output:
+1800 5400 8320 1000 1000
+
+
+#include<iostream>
+using namespace std;
+class Box {
+private:
+	int length, width, height;
+public:
+	int cuboid() {
+		return 1000;
+	}
+	Box() {}
+	Box(int a, int b, int c) {
+		length = a;
+		width = b;
+		height=c;
+	}
+	int caculateV();
+	
+}box;
+int Box::caculateV() {
+	return length * width * height;
+}
+int main() {
+	int n, m;
+	cin >> n >> m;
+	int a, b, c;
+	int* caculation = new int[n];
+	for (int i = 0; i < m; i++) {
+		cin >> a >> b >> c;
+		Box v1(a, b, c);
+		caculation[i] = v1.caculateV();
+	}
+	if (n > m) {
+		for (int i = 0; i < m; i++) {
+			cout << caculation[i] << " ";
+		}
+		for (int j = 0; j < n - m; j++){
+			cout << 1000;
+			if (j != n - m - 1)
+				cout << " ";
+		}
+	}
+	else {
+		for (int i = 0; i < m; i++) {
+			cout << caculation[i];
+			if (i != m - 1)
+				cout << " ";
+		}
+	}
+	return 0;
+}

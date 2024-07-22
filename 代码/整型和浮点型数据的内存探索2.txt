@@ -1,0 +1,79 @@
+整型与浮点型数据的内存探索
+
+total submissions: 321timespassed: 30timespassing rate: 9.35%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+在C++编程中，理解整型和浮点型数据在内存中的存储和编码方式是非常重要的。请完成以下小任务，更好地理解这些概念。
+
+任务1：创建一个函数，接收一个整数，然后返回这个整数在内存中的二进制表示。
+
+任务2：创建一个函数，接收一个浮点数，然后返回这个浮点数在内存中的二进制表示。
+
+你需要使用位操作和强制转换来完成这个任务。
+
+
+输入：
+
+    输入包含一个整数和浮点数。
+
+输出：
+
+    输出一个字符串，表示输入整数在内存中的二进制表示。
+    输出一个字符串，表示输入浮点数在内存中的二进制表示。
+
+输入样例：
+
+    5 3.14
+
+输出样例：
+
+    "00000000000000000000000000000101"
+    "01000000010010001111010111000011"
+
+
+sample inpput and output
+样例1
+input:
+3 3.14
+output:
+00000000000000000000000000000011
+01000000010010001111010111000011
+
+
+
+
+#include<iostream>
+using namespace std;
+int x_binary[32] = { 0 };
+int y_binary[32] = { 0 };
+int* transform1(int x) {
+	x_binary[32] = { 0 };
+	for (int i = 0; i < 32; i++) {
+		x_binary[i] = (x >> i) & 1;
+	}
+	return x_binary;
+}
+int* transform2(float y) {
+	int* y_bin = (int*)(&y);
+	for (int i = 31; i >= 0; i--) {
+		y_binary[i] = (*y_bin & (1 << i)) ? 1 : 0;
+	}
+	return y_binary;
+}
+int main() {
+	int x;
+	float y;
+	cin >> x;
+	cin.clear();
+	cin>> y;
+	int* x_bin = transform1(x);
+	for(int i=31;i>=0;i--)
+		cout << x_bin[i];
+	cout << endl;
+	int * y_bin = transform2(y);
+	for (int i = 31; i >= 0; i--)
+		cout << y_bin[i];
+	return 0;
+}

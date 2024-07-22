@@ -1,0 +1,449 @@
+
+面向结构的Tensor
+
+total submissions: 123timespassed: 28timespassing rate: 22.76%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+不使用类和对象等面向对象特性，仅使用C语言的面向结构特性，使用struct结构体，设计一个高维数据结构Tensor，并设计输出Tensor的维度和打印Tensor元素等信息。要求：
+
+（1）包含一个int类型动态数组data。
+（2）包含函数createTensor(int dim_num, int* dim_value)：设置Tensor的维度和大小，按行优先，从1开始，按序生成Tensor数据
+
+          GetSize()：计算Tensor的尺寸并返回
+
+          GetElement(int* dim_index)：获取Tensor中对应坐标的元素。
+
+（3）包含函数Display()：用来打印Tensor的所有元素，按照最后一个维度大小换行输出（参见示例）。
+
+input
+输入Tensor的维度dim_num
+
+输入dim_num个正整数（需要判断是否为正），表示Tensor每一个维度的大小
+
+输入dim_num个整数（需要判断是否大于等于0），表示获取Tensor中指定索引处的元素值
+
+
+output
+
+输出Tensor的尺寸
+
+输出Tensor中指定位置元素
+
+打印ensor的所有元素
+
+
+//********************************************************//
+#include <iostream>
+#include <vector>
+
+struct Tensor {
+    int* data;
+    int* dims;
+    int dim_num;
+    int size;
+
+    Tensor(int dim_num) : dim_num(dim_num), size(1) {
+        dims = new int[dim_num];
+        data = nullptr;
+    }
+
+    ~Tensor() {
+        delete[] dims;
+        delete[] data;
+    }
+
+    bool createTensor(int* dim_value) {
+        for (int i = 0; i < dim_num; ++i) {
+            dims[i] = dim_value[i];
+            if (dim_value[i] <= 0) {
+                return false; // 维度值必须为正整数
+            }
+            size *= dim_value[i];
+        }
+        data = new int[size];
+        // 初始化Tensor数据，这里简单地用行优先，从1开始填充
+        for (int i = 0; i < size; ++i) {
+            data[i] = i + 1;
+        }
+        return true;
+    }
+
+    int GetSize() {
+        return size;
+    }
+
+    int GetElement(int* dim_index) {
+        if (dim_index == nullptr) return -1;
+        int index = 0;
+        for (int i = 0; i < dim_num - 1; ++i) {
+            index += dim_index[i] * (size / dims[i]);
+            size /= dims[i];
+        }
+        index += dim_index[dim_num - 1];
+        if (index < 0 || index >= this->size) {
+            return -1; // 索引越界
+        }
+        return data[index];
+    }
+
+    void Display() {
+        int last_dim_size = dims[dim_num - 1];
+        for (int i = 0; i < size; ++i) {
+            std::cout << data[i] << " ";
+            if ((i + 1) % last_dim_size == 0) {
+                std::cout << std::endl;
+            }
+        }
+    }
+};
+
+int main() {
+    int dim_num;
+    std::cin >> dim_num;
+
+    int* dim_value = new int[dim_num];
+    int* dim_index = new int[dim_num];
+    for (int i = 0; i < dim_num; ++i) {
+        std::cin >> dim_value[i];
+        if (dim_value[i] <= 0) {
+            std::cerr << "Dimension size must be positive!" << std::endl;
+            return 1;
+        }
+    }
+
+    Tensor tensor(dim_num);
+    if (!tensor.createTensor(dim_value)) {
+        std::cerr << "Invalid dimension values!" << std::endl;
+        return 1;
+    }
+
+    std::cout << "Tensor size: " << tensor.GetSize() << std::endl;
+
+    for (int i = 0; i < dim_num; ++i) {
+        std::cin >> dim_index[i];
+        if (dim_index[i] < 0 || dim_index[i] >= tensor.dims[i]) {
+            std::cerr << "Index out of bounds!" << std::endl;
+            return 1;
+        }
+    }
+
+    int element = tensor.GetElement(dim_index);
+    std::cout << "Element at index: ";
+    for (int i = 0; i < dim_num; ++i) {
+        std::cout << dim_index[i] << (i < dim_num - 1 ? ", " : "");
+    }
+    std::cout << " is: " << element << std::endl;
+
+    tensor.Display();
+
+    delete[] dim_value;
+    delete[] dim_index;
+
+    return 0;
+}
+
+
+
+
+//********************************************************//
+#include <iostream>
+using namespace std;
+
+// 定义Tensor的结构体
+typedef struct {
+    int* data; // 存储Tensor数据的动态数组
+    int* shape; // 存储Tensor形状的数组
+    int dim_num; // Tensor的维度数
+    int size; // Tensor的总大小
+} Tensor;
+
+// 创建Tensor
+Tensor* createTensor(int dim_num, int* dim_value) {
+    Tensor* tensor = (Tensor*)malloc(sizeof(Tensor));
+    if (!tensor) return NULL;
+
+    tensor->dim_num = dim_num;
+    tensor->shape = (int*)malloc(dim_num * sizeof(int));
+    if (!tensor->shape) {
+        free(tensor);
+        return NULL;
+    }
+
+    tensor->size = 1;
+    for (int i = 0; i < dim_num; ++i) {
+        if (dim_value[i] <= 0) {
+            free(tensor->shape);
+            free(tensor);
+            return NULL;
+        }
+        tensor->shape[i] = dim_value[i];
+        tensor->size *= dim_value[i];
+    }
+
+    tensor->data = (int*)malloc(tensor->size * sizeof(int));
+    if (!tensor->data) {
+        free(tensor->shape);
+        free(tensor);
+        return NULL;
+    }
+
+    // 初始化Tensor数据
+    for (int i = 0; i < tensor->size; ++i) {
+        tensor->data[i] = i + 1; // 假设Tensor元素从1开始编号
+    }
+
+    return tensor;
+}
+
+// 获取Tensor尺寸
+int GetSize(Tensor* tensor) {
+    return tensor->size;
+}
+
+// 获取Tensor中对应坐标的元素
+int GetElement(Tensor* tensor, int* dim_index) {
+    int index = 0;
+    int stride = 1;
+    for (int i = tensor->dim_num - 1; i >= 0; --i) {
+        if (dim_index[i] < 0 || dim_index[i] >= tensor->shape[i]) {
+            cout << i;
+            return -1;
+        }
+        index += dim_index[i] * stride;
+        stride *= tensor->shape[i];
+    }
+    return tensor->data[index];
+}
+
+// 显示Tensor的所有元素
+void Display(Tensor* tensor) {
+    int last_dim_size = tensor->shape[tensor->dim_num - 1];
+    int count = 0;
+    for (int i = 0; i < tensor->size; ++i) {
+        cout<<tensor->data[i];
+        count++;
+        if (count % last_dim_size == 0) {
+            cout << endl;
+        }
+        else {
+            cout << " ";
+        }
+    }
+}
+
+// 释放Tensor内存
+void freeTensor(Tensor* tensor) {
+    if (tensor) {
+        free(tensor->data);
+        free(tensor->shape);
+        free(tensor);
+    }
+}
+
+int main() {
+    int dim_num, * dim_value, * dim_index;
+
+    // 输入Tensor的维度和大小
+    cin >> dim_num;
+    dim_value = (int*)malloc(dim_num * sizeof(int));
+    if (!dim_value) {
+        return 1;
+    }
+    for (int i = 0; i < dim_num; ++i) {
+        cin >> dim_value[i];
+    }
+
+    // 创建Tensor
+    Tensor* tensor = createTensor(dim_num, dim_value);
+    if (!tensor) {
+        free(dim_value);
+        return 1;
+    }
+
+    // 输入获取Tensor元素的索引
+    dim_index = (int*)malloc(dim_num * sizeof(int));
+    if (!dim_index) {
+        freeTensor(tensor);
+        free(dim_value);
+        return 1;
+    }
+    for (int i = 0; i < dim_num; ++i) {
+        cin>>dim_index[i];
+    }
+    // 输出Tensor的尺寸
+    cout << GetSize(tensor) << endl;
+
+    // 输出Tensor中指定索引处的元素值
+    int element = GetElement(tensor, dim_index);
+    if (element != -1) {
+        cout << element<<endl;
+    }
+ 
+
+    // 打印Tensor的所有元素
+    Display(tensor);
+
+    // 释放内存
+    free(dim_value);
+    free(dim_index);
+    freeTensor(tensor);
+
+    return 0;
+}
+
+//******************************************************//
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// 定义Tensor的结构体
+typedef struct {
+    int* data; // 存储Tensor数据的动态数组
+    int* shape; // 存储Tensor形状的数组
+    int dim_num; // Tensor的维度数
+    int size; // Tensor的总大小
+} Tensor;
+
+// 创建Tensor
+Tensor* createTensor(int dim_num, int* dim_value) {
+    Tensor* tensor = (Tensor*)malloc(sizeof(Tensor));
+    if (!tensor) return NULL;
+    
+    tensor->dim_num = dim_num;
+    tensor->shape = (int*)malloc(dim_num * sizeof(int));
+    if (!tensor->shape) {
+        free(tensor);
+        return NULL;
+    }
+    
+    tensor->size = 1;
+    for (int i = 0; i < dim_num; ++i) {
+        if (dim_value[i] <= 0) {
+            free(tensor->shape);
+            free(tensor);
+            return NULL;
+        }
+        tensor->shape[i] = dim_value[i];
+        tensor->size *= dim_value[i];
+    }
+    
+    tensor->data = (int*)malloc(tensor->size * sizeof(int));
+    if (!tensor->data) {
+        free(tensor->shape);
+        free(tensor);
+        return NULL;
+    }
+    
+    // 初始化Tensor数据
+    for (int i = 0; i < tensor->size; ++i) {
+        tensor->data[i] = i + 1; // 假设Tensor元素从1开始编号
+    }
+    
+    return tensor;
+}
+
+// 获取Tensor尺寸
+int GetSize(Tensor* tensor) {
+    return tensor->size;
+}
+
+// 获取Tensor中对应坐标的元素
+int GetElement(Tensor* tensor, int* dim_index) {
+    int index = 0;
+    int stride = 1;
+    for (int i = tensor->dim_num - 1; i >= 0; --i) {
+        if (dim_index[i] < 0 || dim_index[i] >= tensor->shape[i]) {
+            printf("Invalid index for dimension %d\n", i);
+            return -1;
+        }
+        index += dim_index[i] * stride;
+        stride *= tensor->shape[i];
+    }
+    return tensor->data[index];
+}
+
+// 显示Tensor的所有元素
+void Display(Tensor* tensor) {
+    int last_dim_size = tensor->shape[tensor->dim_num - 1];
+    int count = 0;
+    for (int i = 0; i < tensor->size; ++i) {
+        printf("%d ", tensor->data[i]);
+        count++;
+        if (count % last_dim_size == 0) {
+            printf("\n");
+        }
+    }
+}
+
+// 释放Tensor内存
+void freeTensor(Tensor* tensor) {
+    if (tensor) {
+        free(tensor->data);
+        free(tensor->shape);
+        free(tensor);
+    }
+}
+
+int main() {
+    int dim_num, *dim_value, *dim_index;
+    
+    // 输入Tensor的维度和大小
+    printf("Enter the number of dimensions for the Tensor: ");
+    scanf("%d", &dim_num);
+    dim_value = (int*)malloc(dim_num * sizeof(int));
+    if (!dim_value) {
+        printf("Memory allocation failed!\n");
+        return 1;
+    }
+    printf("Enter the dimensions for the Tensor: ");
+    for (int i = 0; i < dim_num; ++i) {
+        scanf("%d", &dim_value[i]);
+    }
+    
+    // 创建Tensor
+    Tensor* tensor = createTensor(dim_num, dim_value);
+    if (!tensor) {
+        printf("Tensor creation failed!\n");
+        free(dim_value);
+        return 1;
+    }
+    
+    // 输出Tensor的尺寸
+    printf("Size of the Tensor: %d\n", GetSize(tensor));
+    
+    // 输入获取Tensor元素的索引
+    dim_index = (int*)malloc(dim_num * sizeof(int));
+    if (!dim_index) {
+        printf("Memory allocation failed!\n");
+        freeTensor(tensor);
+        free(dim_value);
+        return 1;
+    }
+    printf("Enter the indices to get the element from the Tensor: ");
+    for (int i = 0; i < dim_num; ++i) {
+        scanf("%d", &dim_index[i]);
+    }
+    
+    // 输出Tensor中指定索引处的元素值
+    int element = GetElement(tensor, dim_index);
+    if (element != -1) {
+        printf("Element at indices: ");
+        for (int i = 0; i < dim_num; ++i) {
+            printf("%d ", dim_index[i]);
+        }
+        printf("is: %d\n", element);
+    }
+    
+    // 打印Tensor的所有元素
+    printf("All elements of the Tensor:\n");
+    Display(tensor);
+    
+    // 释放内存
+    free(dim_value);
+    free(dim_index);
+    freeTensor(tensor);
+    
+    return 0;
+}

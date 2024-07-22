@@ -1,0 +1,185 @@
+浮点数量化
+
+total submissions: 129timespassed: 42timespassing rate: 32.56%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+浮点数量化是神经网络中常见操作，其通过把高位宽的浮点数量化为低位宽的浮点数，可以有效地降低计算成本。
+
+请实现一个FPX类，X为FP的位宽。
+
+FPX其接受一个float数据初始化，并且将其量化为任意位宽的浮点数。
+
+
+输入：
+
+第一行两个整型e,f，用于表示FPX的指数位数和尾数位数
+
+第二行两个浮点数，表示用于量化的FP32浮点数输入
+
+
+输出：
+
+输出量化后的两个FPX浮点数
+
+
+注意：量化的意思是将高位宽的数截断为低位宽的表示，没有四舍五入；无论指数和尾数位都需要量化到指定的位宽，尾数的隐藏位不用量化；需要考虑截断到0值的情况。
+
+FPX浮点数的输出需要重载<<运算符，输出FPX数据对应的FP32的值即可（FPX转换为FP32再输出）。
+
+值截断：当数值位于可表示范围之外时，取可表示范围之内的最接近该数值的值，其余位发生截断。 比如，输入为3.7，而量化值的最大表示值为3.625，则将3.7值截断到3.625。
+
+sample inpput and output
+样例2
+input:
+2 4
+2.3 3.4
+output:
+2.25
+3.375
+样例3
+input:
+2 4
+-4.0625 8.976
+output:
+-3.875
+3.875
+样例3
+input:
+3 5
+0.00000123 2342245.123
+output:
+0
+15.75
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+这个量化包括四则运算
+#include<iostream>
+#include<math.h>
+using namespace std;
+class FPX
+{
+	int m_e, m_f;
+public:
+	FPX(int e = 8, int f = 32)
+	{
+		m_e = e;
+		m_f = f;
+	}
+	void operator<<(float f)
+	{
+		int x = *(int*)&f, sign, Exponent= 0, Mantissa = 0;
+		//k用于判断首位符号
+		const int k = -2147483648;
+		for (int i = 0; i < 9 + m_f; i++)
+		{
+			if (i == 0)
+			{
+				if (x << i & k)
+					sign = 1;
+				else 
+					sign = 0;
+			}
+			//计算指数位
+			else if (i <= 8 && x << i & k)
+				Exponent += pow(2, 8 - i);
+			//计算位数位
+			else if (x << i & k)
+				Mantissa += pow(2, 31 - i);
+		}
+		//偏移量
+		Exponent -= 127;
+		//上溢，上溢指数位就取能表示的最大值，尾数位为0
+		if (Exponent > pow(2, m_e - 1))
+		{
+			Exponent = pow(2, m_e - 1);
+			Mantissa = 0;
+		}
+		//下溢，极小时为0
+		else if (Exponent < -1 * pow(2, m_e - 1) + 1)
+		{
+			cout << 0 << endl;
+			return;
+		}
+		//尾数为为0时，从指数位借1
+		if (Mantissa == 0)
+		{
+			Exponent--;
+			for (int i = 0; i < m_f; i++)
+			{
+				Mantissa += pow(2, 22 - i);
+			}
+		}
+		//最后或按位或将符号位、指数位、尾数位拼接
+		int sum = (sign << 31) | ((Exponent + 127) << 23) | Mantissa;
+		float output = *(float*)&sum;
+		cout << output << endl;
+	}
+	float caculate(float f)
+	{
+		int x = *(int*)&f, sign, Exponent = 0, Mantissa = 0;
+		const int k = -2147483648;
+		for (int i = 0; i < 9 + m_f; i++)
+		{
+			if (i == 0)
+			{
+				if (x << i & k)sign = 1;
+				else sign = 0;
+			}
+			else if (i <= 8 && x << i & k)Exponent += pow(2, 8 - i);
+			else if (x << i & k)Mantissa += pow(2, 31 - i);
+		}
+		Exponent -= 127;
+		if (Exponent > pow(2, m_e - 1))
+		{
+			Exponent = pow(2, m_e - 1);
+			Mantissa = 0;
+		}
+		else if (Exponent < -1 * pow(2, m_e - 1) + 1)
+		{
+			return 0;
+		}
+		if (Mantissa == 0)
+		{
+			Exponent--;
+			for (int i = 0; i < m_f; i++)
+			{
+				Mantissa += pow(2, 22 - i);
+			}
+		}
+		int sum = (sign << 31) | ((Exponent + 127) << 23) | Mantissa;
+		float output = *(float*)&sum;
+		return output;
+	}
+};
+int main()
+{
+	int e, f;
+	float a, b;
+	char c;
+	cin >> e >> f >> a >> b>>c;
+	FPX F(e, f);
+	F << a;
+	F << b;
+	switch (c)
+	{
+	case'+':
+		F << F.caculate(a) + F.caculate(b);
+		break;
+	case'-':
+		F << F.caculate(a) - F.caculate(b);
+		break;
+	case'*':
+		F << F.caculate(a) * F.caculate(b);
+		break;
+	case'/':
+		F << F.caculate(a) / F.caculate(b);
+		break;
+	default:
+		cout << "error" << endl;
+		break;
+	}
+}
+

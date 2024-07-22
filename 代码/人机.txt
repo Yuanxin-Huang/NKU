@@ -1,0 +1,276 @@
+//人机对战
+//void calculateScore() {
+//	int humanNum = 0;
+//	int aiNum = 0;
+//	int emptyNum = 0;
+//	int directs[4][2] = { {1,0},{1,1},{0,1},{-1,1} };
+//
+//
+//	memset(humanScore, 0, sizeof(humanScore));
+//	memset(aiScore, 0, sizeof(aiScore));
+//
+//	//for (int i = 0; i < N; i++) {
+//	//	for (int j = 0; j < N; j++) {
+//	//		humanScore[i][j] = scoreMap[i][j];
+//	//		aiScore[i][j] = scoreMap[i][j];
+//	//	}
+//	//}
+//	for (int row = 0; row < N; row++) {
+//		for (int col = 0; col < N; col++) {
+//			humanScore[row][col] = scoreMap[row][col];
+//			aiScore[row][col] = scoreMap[row][col];
+//			if (chessBox[row][col] == 0) {
+//				for (int y = -1; y <= 1; y++) {
+//					for (int x = -1; x <= 1; x++) {//计算humanNum，aiNum与emptyNum{
+//						/*for (int k = 0; k < 4; k++) {
+//							int x = directs[k][0];
+//							int y = directs[k][1];*/
+//							//reset
+//						humanNum = 0;
+//						aiNum = 0;
+//						emptyNum = 0;
+//
+//						//Calculate human score. (Forward)
+//
+//						if ((x == 0 && y != 0) || (y == 0 && x != 0) || (x != 0 && y != 0))
+//						{
+//							for (int i = 1; i <= 4; i++)
+//							{
+//								int tempRow = row + i * y;
+//								int tempCol = col + i * x;
+//								if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == 1)
+//								{
+//									humanNum++;
+//								}
+//								else if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == 0)
+//								{
+//									emptyNum++;
+//									break;
+//								}
+//								else
+//									break;
+//							}
+//
+//							for (int i = 1; i <= 4; i++)
+//							{
+//								int tempRow = row - i * y;
+//								int tempCol = col - i * x;
+//								if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == 1)
+//								{
+//									humanNum++;
+//								}
+//								else if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == 0)
+//								{
+//									emptyNum++;
+//									break;
+//								}
+//								else
+//									break;
+//							}
+//
+//							if (humanNum == 1)//根据分数评估表计算人的分数
+//							{
+//								humanScore[row][col] += 3;
+//							}
+//							else if (humanNum == 2)
+//							{
+//								if (emptyNum == 1)
+//								{
+//									humanScore[row][col] += 5;
+//								}
+//								else if (emptyNum == 2)
+//								{
+//									humanScore[row][col] += 50;
+//								}
+//							}
+//							else if (humanNum == 3)
+//							{
+//								if (emptyNum == 1)
+//								{
+//									humanScore[row][col] += 200;
+//								}
+//								else if (emptyNum == 2)
+//								{
+//									humanScore[row][col] += 500;
+//								}
+//							}
+//							else if (humanNum == 4)
+//							{
+//								humanScore[row][col] += 10000;
+//							}
+//
+//							emptyNum = 0;
+//							//Calculate AI score. (Forward)
+//							for (int i = 1; i <= 4; i++)
+//							{
+//								int tempRow = row + i * y;
+//								int tempCol = col + i * x;
+//								if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == -1)
+//								{
+//									aiNum++;
+//								}
+//								else if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == 0)
+//								{
+//									emptyNum++;
+//									break;
+//								}
+//								else
+//									break;
+//							}
+//							//Calculate human score. (Backward)
+//							for (int i = 1; i <= 4; i++)
+//							{
+//								int tempRow = row - i * y;
+//								int tempCol = col - i * x;
+//								if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == -1)
+//								{
+//									aiNum++;
+//								}
+//								else if (tempRow >= 0 && tempRow < N && tempCol >= 0 && tempCol < N && chessBox[tempRow][tempCol] == 0)
+//								{
+//									emptyNum++;
+//									break;
+//								}
+//								else
+//									break;
+//							}
+//
+//							if (aiNum == 0)
+//							{
+//								aiScore[row][col] += 3;
+//							}
+//							if (aiNum == 1)
+//							{
+//								aiScore[row][col] += 5;
+//							}
+//							else if (aiNum == 2)
+//							{
+//								if (emptyNum == 1)
+//								{
+//									aiScore[row][col] += 50;
+//								}
+//								else if (emptyNum == 2)
+//									aiScore[row][col] += 200;
+//							}
+//							else if (aiNum == 3)
+//							{
+//								if (emptyNum == 1)
+//								{
+//									aiScore[row][col] += 500;
+//								}
+//								else if (emptyNum == 2)
+//								{
+//									aiScore[row][col] += 10000;
+//								}
+//							}
+//							else if (aiNum == 4)
+//							{
+//								aiScore[row][col] += 100000;
+//							}
+//
+//						}
+//
+//					}
+//				}
+//
+//			}
+//		}
+//	}
+//}
+///*
+//void aiDown() {
+//	calculateScore();
+//	int humanMaxScore = 0;
+//	int aiMaxScore = 0;
+//	int aiMaxCount = 0;
+//	int humanMaxCount = 0;
+//	int humanRow, humanCol;
+//	int aiRow, aiCol;
+//	for (int i = 0; i < N; i++) {
+//		for (int j = 0; j < N; j++) {
+//			if (humanMaxScore < humanScore[i][j]) {
+//				humanMaxScore = humanScore[i][j];
+//				humanRow = i;
+//				humanCol = j;
+//
+//			}
+//
+//			if (aiMaxScore < aiScore[i][j]) {
+//				aiMaxScore = aiScore[i][j];
+//				aiRow = i;
+//				aiCol = j;
+//
+//			}
+//
+//		}
+//	}
+//
+//	for (int i = 0; i < N; i++) {
+//		for (int j = 0; j < N; j++) {
+//			if (humanMaxScore == humanScore[i][j]) {
+//				humanMaxCount++;
+//			}
+//
+//			if (aiMaxScore == aiScore[i][j]) {
+//				aiMaxCount++;
+//			}
+//		}
+//	}
+//
+//	if (aiMaxScore >= humanMaxScore) {
+//		if (aiMaxCount > 1) {
+//			chessBox[humanRow][humanCol] = aiColor;
+//			drawChess(humanRow, humanCol, aiColor);
+//		}
+//		else {
+//			chessBox[aiRow][aiCol] = aiColor;
+//			drawChess(aiRow, aiCol, aiColor);
+//		}
+//	}
+//	else if (aiMaxScore < humanMaxScore) {
+//		if (humanMaxCount > 1) {
+//			chessBox[aiRow][aiCol] = aiColor;
+//			drawChess(aiRow, aiCol, aiColor);
+//		}
+//		else {
+//			chessBox[humanRow][humanCol] = aiColor;
+//			drawChess(humanRow, humanCol, aiColor);
+//		}
+//	}
+//}*/
+//void aiDown()
+//{
+//	calculateScore();
+//	int chessnum = 0;
+//	int Aimax = 0,ax,ay, Humanmax = 0,hx,hy;
+//	for (int i = 0; i < N; i++)
+//	{
+//		for (int j = 0; j < N; j++)
+//		{
+//			if(Aimax<=aiScore[i][j]&&chessBox[i][j]==0)
+//			{
+//				Aimax = aiScore[i][j];
+//				ax = i;
+//				ay = j;
+//			}
+//			if (Humanmax <= humanScore[i][j]&&chessBox[i][j]==0)
+//			{
+//				Humanmax = humanScore[i][j];
+//				hx = i;
+//				hy = j;
+//			}
+//		}
+//	}
+//	if (Aimax > Humanmax)
+//	{
+//	chessnum++;
+//	chessBox[ax][ay] = aiColor;
+//		drawChess(ax, ay,aiColor);
+//	}
+//	else
+//	{
+//		chessnum++;
+//		chessBox[hx][hy] = aiColor;
+//		drawChess(hx, hy,aiColor);
+//	}
+//}

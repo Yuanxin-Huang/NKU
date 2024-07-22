@@ -1,0 +1,40 @@
+#include <stdio.h>
+int main()
+{
+	int a[10][10], max[10][10], min[10][10];
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			scanf_s("%d", &a[i][j]);//循环输入5*5矩阵
+		}
+	}
+	for (int i = 0; i < 5; i++) {//求出每一行的最大值
+		int max1 = 0, y = 0;
+		for (int j = 0; j < 5; j++) {
+			if (a[i][j] > max1) {
+				max1 = a[i][j];//储存在相应位置中
+				y = j;
+			}
+		}
+		max[i][y] = max1;
+	}
+	for (int j = 0; j < 5; j++) {//求出每一列的最小值
+		int min1 = 100, x = 0;
+		for (int i = 0; i < 5; i++) {
+			if (a[i][j] < min1) {
+				min1 = a[i][j];//储存在相应位置中
+				x = i;
+			}
+		}
+		min[x][j] = min1;
+	}
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			if ((max[i][j] == min[i][j]) && max[i][j] > 0 && min[i][j] > 0) {//如果其中有既是行最大又是列最小的数
+				printf("%d %d %d", i + 1, j + 1, max[i][j]);//则输出值以及其行数和列数，由于储存时序数从零开始，行数与列数都加一
+				return 0;//若存在就结束，否则跳出循环继续运行输出“not found”
+			}
+		}
+	}
+	printf("not found");
+	return 0;
+}

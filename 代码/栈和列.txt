@@ -1,0 +1,392 @@
+继承：从线性表到栈和队列
+
+total submissions: 15timespassed: 11timespassing rate: 73.33%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+设计一个线性表类，再根据该线性表类分别派生出队列类（先进先出）和栈类（先进后出）在主函数中进行测试。
+
+对于线性表类的设计，你应该先设计一个节点类（data），然后再利用类的组合，设计一个线性表类，该类应该保存头节点和尾节点，便于从头部插入和从尾部插入。
+
+对于派生出来的队列类和栈类，你应该实现的成员函数有
+
+void pop()，在栈中弹出栈顶元素,在队列中弹出队首元素
+
+void insert(data t),在栈中实现元素的压栈，在队列中实现元素的入队
+
+void print(),用于将栈和队列的元素给打印出来，按照对应的pop顺序打印
+
+你将在主函数中根据要求实现一个栈的构造和一个队列的构造，然后再对其进行相关的操作，最后打印出栈和队列中的元素
+
+输入
+
+一个整数n，代表初始栈和队列的元素个数
+
+一行n个整数，用于构造初始的栈和队列
+
+一个整数m，代表接下来的操作数
+
+m行，代表具体的操作，字符i表示插入，字符p表示pop弹出
+
+输出
+
+两行，第一行输出栈内元素，第二行输出队列中的元素，两个元素间用空格隔开，行尾无空格
+
+sample inpput and output
+样例1
+input:
+9
+1 2 3 4 5 6 7 8 9
+9
+p
+p
+p
+p
+i 10
+i 11
+p
+p
+i 12
+output:
+12 5 4 3 2 1
+7 8 9 10 11 12
+
+
+#include <iostream>
+
+using namespace std;
+
+struct LNode
+{
+	int data;
+	LNode* next;
+};
+
+
+
+class Stack
+{
+public:
+	LNode* head;
+
+public:
+	Stack();
+	~Stack();
+
+	int pop();
+	void push(int value);
+	void print();
+};
+
+class Queue
+{
+public:
+	LNode* head;
+	LNode* tail;
+
+public:
+
+	Queue();
+	~Queue();
+	int pop();
+	void push(int value);
+	void print();
+};
+
+Stack::Stack()
+{
+	head = new (nothrow) LNode;
+	head->next = nullptr;
+}
+
+Stack::~Stack()
+{
+	LNode* moveptr = new (nothrow) LNode;
+	while (head->next != nullptr)
+	{
+		moveptr = head->next;
+		head->next = moveptr->next;
+		delete moveptr;
+		moveptr = nullptr;
+	}
+}
+
+int Stack::pop()
+{
+	if(head==nullptr)	return false;
+
+	LNode* transptr = new (nothrow) LNode;
+
+	int rest = head->next->data;
+	transptr = head->next;
+	head->next = transptr->next;
+
+	return rest;
+}
+
+//压栈
+void Stack::push(int value)
+{
+	LNode* transptr = new (nothrow) LNode;
+	transptr->next = head->next;
+	head->next = transptr;
+	transptr->data = value;
+
+}
+
+void Stack::print()
+{
+	LNode* moveptr;
+	moveptr = head->next;
+
+	//先遍历到最后一个元素，在输出\n
+	while (moveptr->next != nullptr)
+	{
+		cout << moveptr->data << " ";
+		moveptr = moveptr->next;
+	}
+	cout << moveptr->data << '\n';
+}
+
+Queue::Queue()
+{
+	head = new (nothrow) LNode;
+	head->next = nullptr;
+
+	tail = head;		//尾指针指向头节点
+}
+
+Queue::~Queue()
+{
+	LNode* moveptr = new (nothrow) LNode;
+	while (head->next != nullptr)
+	{
+		moveptr = head->next;
+		head->next = moveptr->next;
+		delete moveptr;
+		moveptr = nullptr;
+	}
+}
+
+int Queue::pop()
+{
+	LNode* transptr = new (nothrow) LNode;
+	transptr = head->next;
+	head->next = transptr->next;
+
+	int rest = transptr->data;
+	return rest;
+}
+
+//入队
+void Queue::push(int value)
+{
+	LNode* transptr = new (nothrow)LNode;
+	transptr->next = nullptr;
+	transptr->data = value;
+
+	tail->next = transptr;
+	tail = transptr;
+
+	//首元素需要被添加到头指针后
+	if (head->next == nullptr) head->next = transptr;
+
+}
+
+void Queue::print()
+{
+	LNode* moveptr;
+	moveptr = head->next;
+
+	//先遍历到最后一个元素，在输出\n
+	while (moveptr->next != nullptr)
+	{
+		cout << moveptr->data << " ";
+		moveptr = moveptr->next;
+	}
+	cout << moveptr->data << '\n';
+}
+
+int main()
+{
+	Queue myque;
+	Stack mystack;
+	int n;
+	int num;
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> num;
+		mystack.push(num);
+		myque.push(num);
+	}
+
+	int op_times;
+	char op;
+	int push_num;
+	cin >> op_times;
+	for (int i = 0; i < op_times; i++)
+	{
+		cin >> op;
+		if (op == 'p')
+		{
+			mystack.pop();
+			myque.pop();
+		}
+		if (op == 'i')
+		{
+			cin >> push_num;
+			mystack.push(push_num);
+			myque.push(push_num);
+		}
+	}
+
+	mystack.print();
+	myque.print();
+
+
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#include <iostream>  
+
+struct data {
+    int val;
+    data* next;
+
+    data(int v) : val(v), next(nullptr) {}
+};
+
+class Stack {
+private:
+    data* top;  
+ 
+    void printList(data* start) {
+        data* current = start;
+        while (current) {
+            std::cout << current->val;
+            if (current->next != nullptr) std::cout << " ";
+            
+            current = current->next;
+        }
+        std::cout << std::endl;
+    }
+
+public:
+    Stack() : top(nullptr) {}
+
+    ~Stack() {
+        while (top) {
+            data* temp = top;
+            top = top->next;
+            delete temp;
+        }
+    }
+ 
+    void pop() {
+        if (top) {
+            data* temp = top;
+            top = top->next;
+            delete temp;
+        }
+    }
+ 
+    void insert(int val) {
+        data* newNode = new data(val);
+        newNode->next = top;
+        top = newNode;
+    }  
+    void print() {
+        printList(top);
+    }
+};
+ 
+class Queue {
+private:
+    data* front; 
+    data* rear;  
+    void printList(data* start) {
+        data* current = start;
+        while (current) {
+            std::cout << current->val;
+            if (current->next != nullptr) std::cout << " ";
+            current = current->next;
+        }
+    }
+
+public:
+    Queue() : front(nullptr), rear(nullptr) {}
+ 
+    ~Queue() {
+        while (front) {
+            data* temp = front;
+            front = front->next;
+            delete temp;
+            if (front == nullptr) {
+                rear = nullptr;
+            }
+        }
+    }
+
+  
+    void pop() {
+        if (front) {
+            data* temp = front;
+            front = front->next;
+            if (front == nullptr) {
+                rear = nullptr;  
+            }
+            delete temp;
+        }
+    }
+  
+    void insert(int val) {
+        data* newNode = new data(val);
+        if (!rear) {
+            front = rear = newNode;
+        }
+        else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+    }
+  
+    void print() {
+        printList(front);
+    }
+};
+
+int main() {
+    int n, m, val;
+    std::cin >> n;
+
+    Stack stack;
+    Queue queue;
+
+    for (int i = 0; i < n; ++i) {
+        std::cin >> val;
+        stack.insert(val);
+        queue.insert(val);
+    }
+
+    std::cin >> m;
+    char op;
+    for (int i = 0; i < m; ++i) {
+        std::cin >> op;
+        if (op == 'i') {
+            std::cin >> val;
+            stack.insert(val);
+            queue.insert(val);
+        }
+        else if (op == 'p') {
+            stack.pop();
+            queue.pop();
+        }
+    }
+  
+    stack.print();   
+    queue.print();  
+
+    return 0;
+}

@@ -1,0 +1,159 @@
+逃离星球计划
+
+total submissions: 23timespassed: 4timespassing rate: 17.39%
+
+memory limit: 10485760(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+在未来的一个时代，人类已经探索并殖民了多元宇宙。你是名为"Xenon"的星球的领主，这是一个人类的新殖民地，位于"U-234"宇宙。然而，你们的星球正面临一场灾难，它即将与另外一颗巨大的彗星"Folcon"相撞。你必须带领你的人民在行星撞击前逃离"Xenon"星球，以避免这场即将到来的灾难。
+
+ 
+
+你的科学家们已经设计出了一种新型的宇宙飞船"Spaceship"，可以用于疏散人口。你的任务需要创建和管理你的宇宙飞船，需要跟踪你创建的飞船数量，以及质量，以确保你有足够的飞船来疏散你的人民。这是一场与时间的赛跑，你必须尽快行动，否则你的人民可能会面临灾难。你准备好接受这个挑战了吗？
+
+ 
+
+创建类：
+
+1、你需要创建Universe类，用于管理多元宇宙信息，比如不同多元宇宙的万有引力常数等信息，不同宇宙的信息不同，同一宇宙的信息不可更改。
+
+2、你需要创建Planet类，他们具有常量的质量、半径等参数，创建对象时即确定且不可更改。不同多元宇宙的Planet具有不同的Universe信息，同一宇宙的Planet必须共享同一且唯一的Universe对象。
+
+3、你需要创建Spaceship类，用于疏散人口，该类具有加速度和最大速度等参数，每创建一艘飞船，由于质量问题，其最大速度和加速度就确定不可更改。
+
+ 
+
+要求：
+
+你需要创建"U-234"宇宙并设置该宇宙的各种常数信息；
+
+你需要创建"Xenon"和"Folcon"星球，他们会在时间t之后相撞；
+
+你需要创建n艘飞船，用于逃离"Xenon"星球。由于"Folcon"星球质量远远小于"Xenon"星球，假设飞船不受"Folcon"星球质量的影响，只受"Xenon"星球的万有引力，并且"Xenon"星球不相对于"Folcon"星球移动；
+
+计算有多少艘飞船成功逃离了"Xenon"星球（在撞击时间前达到逃逸速度），并且在星球撞击时间t时各自距离"Xenon"星球的距离d。
+
+ 
+
+输入：
+
+第一行： 宇宙的万有引力常数；
+
+第二行：两颗星球的质量、半径，以及撞击时间t；
+
+第三行：整数n用于表示创建n艘飞船；
+
+接下来n行：输入飞船的加速度和最大速度。
+
+
+输出：
+
+第一行：成功逃离的飞船数量m；
+
+接下来m行：每艘飞船距离"Xenon"星球的距离（以起飞点计，达到最大速度后不再加速）。
+
+sample inpput and output
+样例1
+input:
+6e-10 
+5e20 2e6 3e15 6e3 1000 
+2
+20 200
+100 1000
+output:
+1
+995000
+
+
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+class Universe {
+public:
+    double G;
+    Universe(double g) : G(g) {}
+};
+
+class Planet {
+public:
+    double mass;
+    double radius;
+    Universe* universe;
+    Planet(double m, double r, Universe* u) : mass(m), radius(r), universe(u) {}
+    double escape_velocity() const {
+        return sqrt(2 * universe->G * mass / radius);
+    }
+};
+class Spaceship {
+public:
+    double acceleration;
+    double max_speed;
+    double distance_from_planet;
+    double time_to_max_speed = max_speed / acceleration;
+    double escape_velocity;
+    Spaceship(double a, double s) : acceleration(a), max_speed(s) {}
+    //计算逃逸时间
+    double time_to_escape(const Planet& planet) {
+        double escape_velocity = planet.escape_velocity();//逃逸速度
+        double escape_time= escape_velocity / acceleration;
+        return escape_time;
+    }
+
+
+    //计算距离
+    void update_distance(double dt, const Planet& planet, double t) {
+        if (time_to_max_speed == t) {
+            distance_from_planet = 0.5 * acceleration * t * t;
+        }
+        else {
+            distance_from_planet = 0.5 * acceleration * time_to_max_speed * time_to_max_speed + max_speed * (t - time_to_max_speed);
+        }
+    }
+};
+
+int main() {
+    double G;
+    cin >> G;
+    Universe U234(G);
+    cin.ignore();
+
+    double mass_xenon, radius_xenon, mass_folcon, radius_folcon, t;
+    cin >> mass_xenon >> radius_xenon >> mass_folcon >> radius_folcon >> t;
+    Planet xenon(mass_xenon, radius_xenon, &U234);
+    Planet folcon(mass_folcon, radius_folcon, &U234);
+
+    int n;
+    cin >> n;
+    vector<Spaceship> spaceships;
+    for (int i = 0; i < n; ++i) {
+        double acceleration, max_speed;
+        cin >> acceleration >> max_speed;
+        spaceships.push_back(Spaceship(acceleration, max_speed));
+    }//创造飞船
+    vector<double> escaped_distances;
+    //遍历每个飞船的加速度和速度
+    for (Spaceship& ship : spaceships) {
+        double escape_time = ship.time_to_escape(xenon);
+        if (ship.max_speed < xenon.escape_velocity()) {
+            continue;
+        }
+        else {
+            if (escape_time <= t) {
+                ship.update_distance(escape_time, xenon, t);
+                escaped_distances.push_back(ship.distance_from_planet);
+            }
+        }
+    }
+    int count = escaped_distances.size();
+   cout << count<< endl;
+   //输出逃逸的飞船和速度
+   for (int i = 0; i < count;i++) {
+        cout << escaped_distances[i];
+        if (i != count - 1)
+            cout << endl;
+    }
+
+    return 0;
+}

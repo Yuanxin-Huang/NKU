@@ -1,0 +1,97 @@
+Buy in & Sell out
+
+total submissions: 225timespassed: 90timespassing rate: 40.00%
+
+memory limit: 1048576000(BYTE)time limit: 1000(MS)input limit: 1000(line)output limit: 1000(line)
+question description
+
+Now you are a fruit reseller. You buy in fruit and sell them out to earn your life.
+
+Given an array of integers of length n, the i-th number in the array means the price of fruit for the day. You have two chances to buy in, but cause your storehouse has a limitted size, you can not buy fruit in before selling out your inventory.
+
+The question is, based on the given information, how could you make the most money?
+
+For example, given n=4, array=[5,6,1,2], you should:
+
+1.Buy in at the first day;
+
+2.Sell out your inventory at the second day;
+
+3.Buy in at the third day;
+
+4.Sell out your inventory at the forth day;
+
+And your income will be -5+6-1+2=2, that's the most money you can earn.
+
+NOTICE : The time complexity of your code should be kept below O(n^2) (excluding O(n^2)).
+
+sample inpput and output
+样例1
+input:
+4
+5
+6
+1
+2
+output:
+2
+样例2
+input:
+4
+1
+2
+3
+4
+output:
+3
+样例3
+input:
+10
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+output:
+9
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+int comp(const void* p1, const void* p2)
+{
+	return *(int*)p2 - *(int*)p1;
+}
+int main()
+{
+	int n, pr[100000] = { 0 }, a[100000] = { 0 }, e = 0, s = 0, t = 0, l = 0;
+	scanf("%d", &n);
+	for (int i = 0; i < n; i++)
+	{
+		scanf("%d", &a[i]);
+	}
+	for (s, e; e < n - 1; e++)
+	{
+		if (a[e] > a[e + 1])
+		{
+			pr[l] = a[e] - a[s];
+			l++;
+			s = e + 1;
+		}
+	}
+	if (n > 1)
+	{
+		pr[l + 1] = a[n - 1] - a[s];
+	}
+	int sz = sizeof(pr) / sizeof(pr[0]);
+	qsort(pr, sz, sizeof(pr[0]), comp);
+	printf("%d", pr[0] + pr[1]);
+	return 0;
+}

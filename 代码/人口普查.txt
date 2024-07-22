@@ -1,0 +1,95 @@
+最年长与最年轻(结构体)
+
+总提交数: 260次通过数: 51次通过率: 19.62%
+
+内存限制: 10485760(BYTE)时间限制: 1000(MS)输入限制: 1000(行)输出限制: 1000(行)
+题目描述
+
+某城镇进行人口普查，得到了全体居民的生日。现请你写个程序，利用--结构体--找出镇上最年长和最年轻的人。
+
+struct info {
+    char name[10];
+    int y, m, d;
+}
+
+这里确保每个输入的日期都是合法的，但不一定是合理的——假设已知镇上没有超过200岁的老人，而今天是2019年12月17日（假设今天的日期），所以超过200岁的生日和未出生的生日都是不合理的，应该被过滤掉。
+
+输入格式：
+
+输入在第一行给出正整数N，取值在(0, 105]；随后N行，每行给出1个人的姓名（由不超过5个英文字母组成的字符串）、以及按“yyyy/mm/dd”（即年/月/日）格式给出的生日。题目保证最年长和最年轻的人没有并列。
+
+输出格式：
+
+在一行中顺序输出有效生日的个数、最年长人和最年轻人的姓名，其间以空格分隔。
+
+**注意**要考虑到，如果没有一个数据符合，则没有最大最小年龄的人，所以只输出0。
+
+样例输入输出
+样例1
+输入:
+5
+John 2001/05/12
+Tom 1819/12/17
+Ann 2121/01/30
+James 1819/12/15
+Steve 1967/11/20
+输出:
+3 Tom John
+
+#include<stdio.h>
+#include<string.h>
+struct info {
+    char name[10];
+    int y, m, d;
+} per[200];;
+int main() {
+    int N, n = 0;
+    int i, j;
+    int count[200] = { 0 };
+    scanf("%d\n", &N);
+    for (i = 0; i < N; i++) {
+        scanf("%s %d/%d/%d", per[i].name, &per[i].y, &per[i].m, &per[i].d);
+        if (per[i].y > 1819 && per[i].y < 2019) {
+            n++;
+            count[i] = 1;
+        }
+        if (per[i].y == 1819 && per[i].m == 12 && per[i].d >= 17) {
+            n++;
+            count[i] = 1;
+        }
+        if (per[i].y == 2019 && per[i].m < 12
+            || per[i].y == 2019 && per[i].m == 12
+            && per[i].d <= 17) {
+            n++;
+            count[i] = 1;
+        }
+    }
+    int max = 0, min = 0;
+    if (n > 0) {
+        for (j = 0; j < N; j++) {
+            if (count[j] == 1) {
+                if (per[max].y > per[j].y || per[max].y == per[j].y
+                    && per[max].m > per[j].m || per[max].y == per[j].y
+                    && per[max].m == per[j].m && per[max].d > per[j].d) {
+                    max = max;
+                }
+                else {
+                    max = j;
+                }
+                if (per[j].y > per[min].y || per[min].y == per[j].y
+                    && per[min].m < per[j].m || per[min].y == per[j].y
+                    && per[min].m == per[j].m && per[min].d < per[j].d) {
+                    min = min;
+                }
+                else {
+                    min = j;
+                }
+            }
+        }
+        printf("%d %s %s", n, per[min].name, per[max].name);
+    }
+    else
+        printf("0");
+
+    return 0;
+}
